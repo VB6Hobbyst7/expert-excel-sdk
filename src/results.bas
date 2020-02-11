@@ -101,7 +101,7 @@ JSONErr:
 
 End Function
 
-Private Function GetBufferStatus() As Boolean
+Function GetBufferStatus() As Variant
     GetBufferStatus = True
     
     Dim label As String
@@ -131,11 +131,12 @@ Private Function GetBufferStatus() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetBufferStatus = False
     Else
-        With Worksheets("BoonNano")
-            .Range("byteWritten").Value = json("totalBytesWritten")
-            .Range("byteProcess").Value = json("totalBytesProcessed")
-            .Range("byteBuffer").Value = json("totalBytesInBuffer")
-        End With
+        GetBufferStatus = Response.Content
+'        With Worksheets("BoonNano")
+'            .Range("byteWritten").Value = json("totalBytesWritten")
+'            .Range("byteProcess").Value = json("totalBytesProcessed")
+'            .Range("byteBuffer").Value = json("totalBytesInBuffer")
+'        End With
     End If
     
     Range("status").Value = "finished"
@@ -242,11 +243,6 @@ Private Function LoadData() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         LoadData = False
         Exit Function
-        
-    Else
-        If Not (GetBufferStatus) Then
-            LoadData = False
-        End If
     End If
     
     Range("status").Value = "finished"
@@ -309,8 +305,8 @@ Private Function RunNano() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         RunNano = False
     Else
-        If GetBufferStatus And GetStatus Then
-                On Error GoTo Err
+        If GetStatus Then
+                ' On Error GoTo Err
                 ExportAnomalies
             MsgBox "Clustering successful"
         Else
@@ -336,30 +332,30 @@ End Function
 
 Private Function ExportAnomalies() As Boolean
     Dim results As Variant, label As String, t As Integer
-    label = "Anomalies"
-    If WorksheetExists(label) Then
-        Worksheets(label).Cells.Clear
-    Else
-        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
-        NewSheet.Name = label
-    End If
-    Worksheets("BoonNano").Activate
-    
-    Set results = GetResults
-    
-    numAnomalies = 0
-    For i = 1 To results("RI").Count
-        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
-            numAnomalies = numAnomalies + 1
-            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
-                
-            
-            Next j
-            Selection.Rows(i).Copy
-            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
-        End If
-    Next i
-    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
+'    label = "Anomalies"
+'    If WorksheetExists(label) Then
+'        Worksheets(label).Cells.Clear
+'    Else
+'        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
+'        NewSheet.Name = label
+'    End If
+'    Worksheets("BoonNano").Activate
+'
+     Set results = GetResults
+'
+'    numAnomalies = 0
+'    For i = 1 To results("RI").Count
+'        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
+'            numAnomalies = numAnomalies + 1
+'            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
+'
+'
+'            Next j
+'            Selection.Rows(i).Copy
+'            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
+'        End If
+'    Next i
+'    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
     
     label = "Results"
     If WorksheetExists(label) Then
@@ -367,22 +363,26 @@ Private Function ExportAnomalies() As Boolean
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
+        Worksheets("Results").Columns("G").Select
+        ActiveWindow.FreezePanes = True
     End If
     
     Worksheets(label).Rows(1).Font.Bold = True
-    Worksheets(label).Cells(1, 1) = "Cluster Index"
-    Worksheets(label).Cells(1, 2) = "Anomaly Index"
-    Worksheets(label).Cells(1, 3) = "Smoothed Anomaly Index"
-    Worksheets(label).Cells(1, 4) = "Frequency Index"
-    Worksheets(label).Cells(1, 5) = "Distance Index"
+    Worksheets(label).Cells(1, 1) = "Pattern Number"
+    Worksheets(label).Cells(1, 2) = "Cluster ID"
+    Worksheets(label).Cells(1, 3) = "Anomaly Index"
+    Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
+    Worksheets(label).Cells(1, 5) = "Frequency Index"
+    Worksheets(label).Cells(1, 6) = "Distance Index"
     For i = 1 To results("RI").Count
-        Worksheets(label).Cells(i + 1, 1) = results("ID")(i)
-        Worksheets(label).Cells(i + 1, 2) = results("RI")(i)
-        Worksheets(label).Cells(i + 1, 3) = results("SI")(i)
-        Worksheets(label).Cells(i + 1, 4) = results("FI")(i)
-        Worksheets(label).Cells(i + 1, 5) = results("DI")(i)
-    Next
-    With Worksheets(label).Columns("A:E")
+        Worksheets(label).Cells(i + 1, 1) = i
+        Worksheets(label).Cells(i + 1, 2) = results("ID")(i)
+        Worksheets(label).Cells(i + 1, 3) = results("RI")(i)
+        Worksheets(label).Cells(i + 1, 4) = results("SI")(i)
+        Worksheets(label).Cells(i + 1, 5) = results("FI")(i)
+        Worksheets(label).Cells(i + 1, 6) = results("DI")(i)
+    Next i
+    With Worksheets(label).Columns("A:F")
         .AutoFit
         .HorizontalAlignment = xlCenter
     End With

@@ -91,7 +91,7 @@ Private Function ReadAuthFile() As String
     Exit Function
     
 Err:
-    MsgBox "Cannot find .Boonlogic file"
+    MsgBox "Cannot find .BoonLogic.lic file"
     ReadAuthFile = "False"
     Exit Function
     
@@ -160,6 +160,12 @@ End Function
 ' stop instance and delete sheets corresponding to it
 Private Function CloseNano() As Boolean
     CloseNano = True
+    
+    If WorksheetExists("Results") Then
+        Application.DisplayAlerts = False
+        Worksheets("Results").Delete
+        Application.DisplayAlerts = True
+    End If
 
     Range("status").Value = "closing nano"
     Dim label As String
