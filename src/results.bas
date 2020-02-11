@@ -30,7 +30,7 @@ Private Function GetStatus() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetStatus = False
     Else
-        Range("numClusters").Value = json("numClusters")
+        Range("numClusters").Value = json("numClusters") - 1
         Range("totalInferences").Value = json("totalInferences")
         Range("avgClusterTime").Value = json("averageInferenceTime")
     End If
