@@ -356,7 +356,7 @@ Private Function BoonHeaders() As Boolean
     
 Headers:
 
-    Worksheets("BoonNano").Columns("B").ColumnWidth = 12.5
+    Worksheets("BoonNano").Columns("B").ColumnWidth = 13
 
     With Worksheets("BoonNano").Range("B1")
         ' .Value = "User"

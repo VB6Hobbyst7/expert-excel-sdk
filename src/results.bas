@@ -305,7 +305,7 @@ Private Function RunNano() As Boolean
         RunNano = False
     Else
         If GetStatus Then
-                On Error GoTo Err
+                ' On Error GoTo Err
                 ExportAnomalies
             MsgBox "Clustering successful"
         Else
@@ -331,32 +331,31 @@ End Function
 
 Private Function ExportAnomalies() As Boolean
     Dim results As Variant, label As String, t As Integer
-'    label = "Anomalies"
-'    If WorksheetExists(label) Then
-'        Worksheets(label).Cells.Clear
-'    Else
-'        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
-'        NewSheet.Name = label
-'    End If
-'    Worksheets("BoonNano").Activate
-'
-'
-'
-'    numAnomalies = 0
-'    For i = 1 To results("RI").Count
-'        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
-'            numAnomalies = numAnomalies + 1
-'            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
-'
-'
-'            Next j
-'            Selection.Rows(i).Copy
-'            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
-'        End If
-'    Next i
-'    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
-    
+    label = "Anomalies"
+    If WorksheetExists(label) Then
+        Worksheets(label).Cells.Clear
+    Else
+        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
+        NewSheet.Name = label
+    End If
+    Worksheets("BoonNano").Activate
+
     Set results = GetResults
+
+    numAnomalies = 0
+    For i = 1 To results("RI").Count
+        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
+            numAnomalies = numAnomalies + 1
+            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
+
+
+            Next j
+            Selection.Rows(i).Copy
+            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
+        End If
+    Next i
+    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
+    
     MsgBox results("RI").Count
     label = "Results"
     If WorksheetExists(label) Then
@@ -385,6 +384,8 @@ Private Function ExportAnomalies() As Boolean
         .AutoFit
         .HorizontalAlignment = xlCenter
     End With
+    Worksheets("Results").Columns("G").Select
+    ActiveWindow.FreezePanes = True
     
     Worksheets("BoonNano").Activate
 
