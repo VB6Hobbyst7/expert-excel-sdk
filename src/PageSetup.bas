@@ -104,10 +104,10 @@ End Sub
 Private Sub AutotuneButton()
     Dim btn As Button
     Set t = Worksheets("BoonNano").Range("A5")
-    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 2, t.Top + 2, t.Width - 4, t.Height - 4)
+    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 20, t.Top + 2, t.Width - 40, t.Height - 4)
     With btn
         .Name = "Autotune"
-        .Caption = "Autotune Selection"
+        .Caption = "Autotune"
         .OnAction = "config.AutotuneConfig"
     End With
 End Sub
@@ -127,7 +127,7 @@ End Sub
 Private Sub ConfigureButton()
     Dim btn As Button
     Set t = Worksheets("BoonNano").Range("A4")
-    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 2, t.Top + 2, t.Width - 4, t.Height - 4)
+    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 20, t.Top + 2, t.Width - 40, t.Height - 4)
     With btn
         .Name = "Configure"
         .Caption = "Manual"
@@ -137,7 +137,6 @@ End Sub
 
 Private Sub ResetBuffer()
     On Error GoTo Err
-    
     Application.Run ("management.CloseNano")
     Application.Run ("management.OpenNano")
     ' Application.Run ("results.GetBufferStatus")
