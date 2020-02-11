@@ -42,7 +42,8 @@ The license should be saved in ~/.BoonLogic.license on unix machines or C:/Users
 The *API-KEY*, *WEB ADDRESS*, and *API-TENANT* will be unique to your obtained license.
 
 The .BoonLogic.license file will be consulted by the BoonNano Excel Add-in to successfully find and authenticate with your designated server.
->**NOTE:** It is important that the file is named and placed correctly.    >Check for:
+>**NOTE:** It is important that the file is named and placed correctly.  
+>Check for:
 >  - the file starting with a period
 >  - both the B and the L in BoonLogic is capitalized
 >  - the extension is a .license file
