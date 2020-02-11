@@ -27,7 +27,7 @@ This Excel Add-in allows users to quickly process their data using the Boon Logi
 
 Note: A license must be obtained from Boon Logic to use the BoonNano Excel Add-in
 
-The license should be saved in ~/.BoonLogic.license on unix machines or C:/Users/\<user\>/.BoonLogic.license on windows machines. This file will contain the following format:
+The license should be saved in ~/.BoonLogic.license on unix machines or C:\\Users\\\<user\>\\.BoonLogic.license on windows machines. This file will contain the following format:
 
 ```json
 {
@@ -47,3 +47,4 @@ The .BoonLogic.license file will be consulted by the BoonNano Excel Add-in to su
 >  - the file starting with a period
 >  - both the B and the L in BoonLogic is capitalized
 >  - the extension is a .license file
+>  - is in your user home directory (/Users/\<user\>/.BoonLogic.license or C:\\Users\\\<user\>\\.BoonLogic.license)
