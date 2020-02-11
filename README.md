@@ -9,8 +9,8 @@ This Excel Add-in allows users to quickly process their data using the Boon Logi
 
 --------------------------
 ### Loading the Excel Add-in
-1. Download the `Boonnano.xlam` file from the [Boonlogic Github page](https://github.com/boonlogic/expert-excel-sdk/blob/master/Boonnano.xlam)
-1. If it is not already added, activate the Developer tab in Excel. For instructions on how to do this go [here](https://support.office.com/en-us/article/show-the-developer-tab-e1192344-5e56-4d45-931b-e5fd9bea2d45)
+1. Download the `Boonnano.xlam` file from the [Boonlogic Github page](https://github.com/boonlogic/expert-excel-sdk/)
+1. If it is not already added, activate the Developer tab in Excel. [For instructions on how to do this, go here](https://support.office.com/en-us/article/show-the-developer-tab-e1192344-5e56-4d45-931b-e5fd9bea2d45)
 
 2. From the Developer tab, select the option with a gear icon, labelled Excel Add-ins.
 
@@ -18,6 +18,6 @@ This Excel Add-in allows users to quickly process their data using the Boon Logi
 
 4. Make sure `Boonnano` is checked in the list and click ok.
 
-5. To start using the Add-in, add the macro to the quick access toolbar for ease of future use. See this [site](https://www.howtoexcel.org/tips-and-tricks/how-to-add-a-macro-to-the-quick-access-toolbar/) for instructions
+5. To start using the Add-in, add the macro to the quick access toolbar for ease of future use. [See this site for instructions.](https://www.howtoexcel.org/tips-and-tricks/how-to-add-a-macro-to-the-quick-access-toolbar/)
 
-6. Now the icon in the Quick Access Toolbar is all you need to get started.
+6. Now, the icon in the Quick Access Toolbar is all you need to get started.
