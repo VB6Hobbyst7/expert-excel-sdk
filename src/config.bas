@@ -13,7 +13,7 @@ Private Function AutotuneConfig() As Boolean
         Exit Function
     End If
     
-    Range("status").Value = "autotuning"
+    ' Range("status").Value = "autotuning"
     Dim label As String, byFeat As Boolean
     label = Range("currentNano").Value
     If Worksheets("BoonNano").Shapes("ByFeature").OLEFormat.Object.Value = 1 Then
@@ -54,16 +54,16 @@ Private Function AutotuneConfig() As Boolean
         Dim col As String
         col = Split(Selection.Address, "$")(1)
         For i = 1 To Worksheets("BoonNano").Range("numFeatures")
-            tmpName = col & "6"
+            tmpName = col & "5"
             Worksheets("BoonNano").Range(tmpName) = json("features")(i)("minVal")
         
-            tmpName = col & "5"
+            tmpName = col & "4"
             Worksheets("BoonNano").Range(tmpName) = json("features")(i)("maxVal")
             
-            tmpName = col & "4"
+            tmpName = col & "3"
             Worksheets("BoonNano").Range(tmpName) = json("features")(i)("weight")
         
-            tmpName = col & "7"
+            tmpName = col & "6"
             Worksheets("BoonNano").Range(tmpName) = json("features")(i)("label")
         
             col = Split(Cells(1, Selection.Columns(i + 1).Column).Address, "$")(1)
@@ -74,7 +74,7 @@ Private Function AutotuneConfig() As Boolean
         
     End If
     
-    Range("status").Value = "finished"
+    ' Range("status").Value = "finished"
     
  Exit Function
     
@@ -107,13 +107,13 @@ Private Sub CheckBlank(Name As String)
             .Range(Name).HorizontalAlignment = xlRight
         ElseIf Name = "percentVariation" Then
             .Range(Name).Value = 0.05
-        ElseIf InStr(Name, "4") <> 0 Then ' check if in weights row
+        ElseIf InStr(Name, "3") <> 0 Then ' check if in weights row
             .Range(Name).Value = 1
-        ElseIf InStr(Name, "5") <> 0 Then ' check if in maxes row
+        ElseIf InStr(Name, "4") <> 0 Then ' check if in maxes row
             .Range(Name).Value = 10
-        ElseIf InStr(Name, "6") <> 0 Then ' check if in mins row
+        ElseIf InStr(Name, "5") <> 0 Then ' check if in mins row
             .Range(Name).Value = 0
-        ElseIf InStr(Name, "7") <> 0 Then ' check if in labels row
+        ElseIf InStr(Name, "6") <> 0 Then ' check if in labels row
             .Range(Name).Value = ""
         ElseIf Name = "anomalyIndex" Then
             .Range(Name).Value = 1000
@@ -156,7 +156,7 @@ End Function
 Private Function SetConfig() As Boolean
     SetConfig = True
     
-    Range("status").Value = "configuring"
+    ' Range("status").Value = "configuring"
     Dim label As String
     label = Range("currentNano").Value
     
@@ -193,19 +193,19 @@ Private Function SetConfig() As Boolean
     ReDim features(Range(tmpName).Value - 1) As Variant
     For i = LBound(features) To UBound(features)
         Set features(i) = New Dictionary
-        tmpName = col & "6"
+        tmpName = col & "5"
         CheckBlank (tmpName)
         features(i).Add "minVal", Range(tmpName).Value
         
-        tmpName = col & "5"
+        tmpName = col & "4"
         CheckBlank (tmpName)
         features(i).Add "maxVal", Range(tmpName).Value
         
-        tmpName = col & "4"
+        tmpName = col & "3"
         CheckBlank (tmpName)
         features(i).Add "weight", Range(tmpName).Value
         
-        tmpName = col & "7"
+        tmpName = col & "6"
         CheckBlank (tmpName)
         features(i).Add "label", Range(tmpName).Value
         
@@ -248,15 +248,15 @@ Private Function SetConfig() As Boolean
         Range("totalInferences").Value = 0
         Range("avgClusterTime").Value = 0
         Range("numAnomalies").Value = 0
-        If Not (Application.Run("results.GetBufferStatus")) Then
-            Exit Function
-        End If
+'        If Not (Application.Run("results.GetBufferStatus")) Then
+'            Exit Function
+'        End If
         On Error Resume Next
         Worksheets("BoonNano").Shapes("Cluster").Delete
         Application.Run ("PageSetup.ClusterButton")
     End If
     
-    Range("status").Value = "finished"
+    ' Range("status").Value = "finished"
     
 Exit Function
 

@@ -23,7 +23,7 @@ End Sub
 Private Function CreateNano(label As String) As Boolean
     CreateNano = True
 
-    Range("status").Value = "attaching nano"
+    ' Range("status").Value = "attaching nano"
     Dim Client As New WebClient
     
     On Error GoTo Err
@@ -52,7 +52,7 @@ Private Function CreateNano(label As String) As Boolean
     
     Worksheets(label).Protect
     
-    Range("status").Value = "finished"
+    ' Range("status").Value = "finished"
     
 Exit Function
     
@@ -91,7 +91,7 @@ Private Function ReadAuthFile() As String
     Exit Function
     
 Err:
-    MsgBox "Cannot find .Boonlogic file"
+    MsgBox "Cannot find .BoonLogic.lic file"
     ReadAuthFile = "False"
     Exit Function
     
@@ -161,7 +161,7 @@ End Function
 Private Function CloseNano() As Boolean
     CloseNano = True
 
-    Range("status").Value = "closing nano"
+    ' Range("status").Value = "closing nano"
     Dim label As String
     label = Range("currentNano").Value
     
@@ -195,7 +195,7 @@ Private Function CloseNano() As Boolean
         Application.DisplayAlerts = True
     End If
     
-    Range("status").Value = "finished"
+    ' Range("status").Value = "finished"
     
 Exit Function
 
