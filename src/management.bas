@@ -75,10 +75,10 @@ Private Function ReadAuthFile() As String
     
     If InStr(Application.OperatingSystem, "Windows") > 0 Then
         ' windows
-        file = "C:\Users\" & Environ("Username") & "\.BoonLogic.lic"
+        file = "C:\Users\" & Environ("Username") & "\.BoonLogic.license"
     Else
         ' macos (or linux???)
-        file = "Macintosh HD:Users:" & MacScript("set userName to short user name of (system info)" & vbNewLine & "return userName") & ":.BoonLogic.lic"
+        file = "Macintosh HD:Users:" & MacScript("set userName to short user name of (system info)" & vbNewLine & "return userName") & ":.BoonLogic.license"
     End If
     
     On Error GoTo Err:
