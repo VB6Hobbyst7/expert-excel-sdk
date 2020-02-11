@@ -91,7 +91,7 @@ Private Function ReadAuthFile() As String
     Exit Function
     
 Err:
-    MsgBox "Cannot find .BoonLogic.lic file"
+    MsgBox "Cannot find .BoonLogic.license file"
     ReadAuthFile = "False"
     Exit Function
     
