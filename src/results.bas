@@ -6,7 +6,7 @@ Private Function GetStatus() As Boolean
     Dim label As String
     label = Range("currentNano").Value
     
-    ' Range("status").Value = "getting results"
+    Range("status").Value = "getting results"
     Dim Client As New WebClient
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
@@ -35,7 +35,7 @@ Private Function GetStatus() As Boolean
         Range("avgClusterTime").Value = json("averageInferenceTime")
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
 Exit Function
 
@@ -57,7 +57,7 @@ Private Function GetResults() As Variant
     Dim label As String
     label = Range("currentNano").Value
     
-    ' Range("status").Value = "getting results"
+    Range("status").Value = "getting results"
     Dim Client As New WebClient
     
     On Error GoTo Err
@@ -85,7 +85,7 @@ Private Function GetResults() As Variant
     End If
     
     Set GetResults = json
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
 Exit Function
     
@@ -107,7 +107,7 @@ Function GetBufferStatus() As Variant
     Dim label As String
     label = Range("currentNano").Value
     
-    ' Range("status").Value = "getting buffer status"
+    Range("status").Value = "getting buffer status"
     Dim Client As New WebClient
     
     On Error GoTo Err
@@ -139,7 +139,7 @@ Function GetBufferStatus() As Variant
 '        End With
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
 Exit Function
 
@@ -168,7 +168,7 @@ Private Function LoadData() As Boolean
     Dim label As String
     label = Range("currentNano").Value
     
-    ' Range("status").Value = "loading data"
+    Range("status").Value = "loading data"
     ' create selection as dictionary
     Dim row As Integer, col As Integer, arrString As String, tmpStr As String
     row = Selection.Rows.Count
@@ -245,7 +245,7 @@ Private Function LoadData() As Boolean
         Exit Function
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
 Exit Function
     
@@ -281,7 +281,7 @@ Private Function RunNano() As Boolean
     Dim label As String
     label = Range("currentNano").Value
     
-    ' Range("status").Value = "running nano"
+    Range("status").Value = "running nano"
     Dim Client As New WebClient
     
     Client.BaseUrl = Worksheets(label).Range("url").Value
@@ -315,7 +315,7 @@ Private Function RunNano() As Boolean
         End If
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
 Exit Function
     
 Err:

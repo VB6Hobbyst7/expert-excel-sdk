@@ -94,7 +94,7 @@ Private Sub CloseCleanup()
         .Shapes("Configure").Delete
         .Shapes("Reset").Delete
         .Shapes("closeBtn").Delete
-        ' .Range("status") = ""
+        .Range("status") = ""
         .Range("byteProcess,byteBuffer,byteWritten,numClusters,totalInferences,avgClusterTime").Value = 0
     End With
     OpenButton
@@ -140,6 +140,7 @@ Private Sub ResetBuffer()
     Application.Run ("management.CloseNano")
     Application.Run ("management.OpenNano")
     ' Application.Run ("results.GetBufferStatus")
+    Worksheets("BoonNano").Shapes("Cluster").Delete
     Range("numClusters,totalInferences,avgClusterTime").Value = 0
     Exit Sub
 
@@ -400,36 +401,38 @@ Headers:
         End With
     End With
     
-'        ' CLUSTER STATUS
-'        With .Range("H1")
-'            .HorizontalAlignment = xlCenter
-'            .Value = "Cluster status"
-'            .Font.Size = 14
-'        End With
-'
-'        .Range("A5:A7").Merge
-'        With .Range("A4:A7").Borders
-'            .LineStyle = xlContinuous
-'            .Weight = xlThick
-'        End With
-'        .Range("A4").Borders(xlEdgeBottom).Weight = xlThin
-'
-'        With .Range("A5")
-'            .HorizontalAlignment = xlCenter
-'            .VerticalAlignment = xlCenter
-'            .Name = "status"
-'            .Value = "finished"
-'            .Font.Size = 14
-'            .FormatConditions.Add Type:=xlExpression, Formula1:="=And(A5<>""finished"", ISBLANK(A5)=FALSE)"
-'            .FormatConditions(.FormatConditions.Count).SetFirstPriority
-'            With .FormatConditions(1)
-'                With .Interior
-'                    .PatternColorIndex = xlAutomatic
-'                    .Color = RGB(255, 0, 0)
-'                End With
-'            .StopIfTrue = False
-'            End With
-'        End With
+        ' CLUSTER STATUS
+        With Worksheets("BoonNano").Range("H1:J1")
+            .Merge
+            .VerticalAlignment = xlCenter
+            .HorizontalAlignment = xlCenter
+            .Value = "Cluster status"
+            .Font.Size = 14
+            .Borders(xlEdgeBottom).Weight = xlThin
+        End With
+
+        With Worksheets("BoonNano").Range("H2:J2")
+           .Merge
+           With .Borders
+                .LineStyle = xlContinuous
+               .Weight = xlThick
+           End With
+
+            .HorizontalAlignment = xlCenter
+            .VerticalAlignment = xlCenter
+            .Name = "status"
+            .Value = "finished"
+            .Font.Size = 14
+            .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished"", ISBLANK(H2)=FALSE)"
+            .FormatConditions(.FormatConditions.Count).SetFirstPriority
+            With .FormatConditions(1)
+                With .Interior
+                    .PatternColorIndex = xlAutomatic
+                    .Color = RGB(255, 0, 0)
+                End With
+            .StopIfTrue = False
+            End With
+        End With
 
     
     Exit Function

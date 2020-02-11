@@ -13,7 +13,7 @@ Private Function AutotuneConfig() As Boolean
         Exit Function
     End If
     
-    ' Range("status").Value = "autotuning"
+    Range("status").Value = "autotuning"
     Dim label As String, byFeat As Boolean
     label = Range("currentNano").Value
     If Worksheets("BoonNano").Shapes("ByFeature").OLEFormat.Object.Value = 1 Then
@@ -74,7 +74,7 @@ Private Function AutotuneConfig() As Boolean
         
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
  Exit Function
     
@@ -156,7 +156,7 @@ End Function
 Private Function SetConfig() As Boolean
     SetConfig = True
     
-    ' Range("status").Value = "configuring"
+    Range("status").Value = "configuring"
     Dim label As String
     label = Range("currentNano").Value
     
@@ -258,7 +258,7 @@ Private Function SetConfig() As Boolean
         
     End If
     
-    ' Range("status").Value = "finished"
+    Range("status").Value = "finished"
     
 Exit Function
 
