@@ -194,37 +194,7 @@ Private Function ParamHeaders() As Boolean
             .Value = "Configure Parameters"
         End With
     
-'        ' CLUSTER STATUS
-'        With .Range("A4")
-'            .HorizontalAlignment = xlCenter
-'            .Value = "Cluster status"
-'            .Font.Size = 14
-'        End With
-'
-'        .Range("A5:A7").Merge
-'        With .Range("A4:A7").Borders
-'            .LineStyle = xlContinuous
-'            .Weight = xlThick
-'        End With
-'        .Range("A4").Borders(xlEdgeBottom).Weight = xlThin
-'
-'        With .Range("A5")
-'            .HorizontalAlignment = xlCenter
-'            .VerticalAlignment = xlCenter
-'            .Name = "status"
-'            .Value = "finished"
-'            .Font.Size = 14
-'            .FormatConditions.Add Type:=xlExpression, Formula1:="=And(A5<>""finished"", ISBLANK(A5)=FALSE)"
-'            .FormatConditions(.FormatConditions.Count).SetFirstPriority
-'            With .FormatConditions(1)
-'                With .Interior
-'                    .PatternColorIndex = xlAutomatic
-'                    .Color = RGB(255, 0, 0)
-'                End With
-'            .StopIfTrue = False
-'            End With
-'        End With
-'
+
         ' CONFIG PARAMETERS
         .Range("B3").Value = "Weight"
         .Range("B4").Value = "Max"
@@ -430,6 +400,39 @@ Headers:
         .StopIfTrue = False
         End With
     End With
+    
+'        ' CLUSTER STATUS
+'        With .Range("H1")
+'            .HorizontalAlignment = xlCenter
+'            .Value = "Cluster status"
+'            .Font.Size = 14
+'        End With
+'
+'        .Range("A5:A7").Merge
+'        With .Range("A4:A7").Borders
+'            .LineStyle = xlContinuous
+'            .Weight = xlThick
+'        End With
+'        .Range("A4").Borders(xlEdgeBottom).Weight = xlThin
+'
+'        With .Range("A5")
+'            .HorizontalAlignment = xlCenter
+'            .VerticalAlignment = xlCenter
+'            .Name = "status"
+'            .Value = "finished"
+'            .Font.Size = 14
+'            .FormatConditions.Add Type:=xlExpression, Formula1:="=And(A5<>""finished"", ISBLANK(A5)=FALSE)"
+'            .FormatConditions(.FormatConditions.Count).SetFirstPriority
+'            With .FormatConditions(1)
+'                With .Interior
+'                    .PatternColorIndex = xlAutomatic
+'                    .Color = RGB(255, 0, 0)
+'                End With
+'            .StopIfTrue = False
+'            End With
+'        End With
+
+    
     Exit Function
     
 Err:
