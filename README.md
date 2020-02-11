@@ -21,3 +21,28 @@ This Excel Add-in allows users to quickly process their data using the Boon Logi
 5. To start using the Add-in, add the macro to the quick access toolbar for ease of future use. [See this site for instructions.](https://www.howtoexcel.org/tips-and-tricks/how-to-add-a-macro-to-the-quick-access-toolbar/)
 
 6. Now, the icon in the Quick Access Toolbar is all you need to get started.
+
+------------
+### License Configuration
+
+Note: A license must be obtained from Boon Logic to use the BoonNano Excel Add-in
+
+The license should be saved in ~/.BoonLogic.license on unix machines or C:/Users/\<user\>/.BoonLogic.license on windows machines. This file will contain the following format:
+
+```json
+{
+  "default": {
+    "api-key": "API-KEY",
+    "server": "WEB ADDRESS",
+    "api-tenant": "API-TENANT"
+  }
+}
+```
+
+The *API-KEY*, *WEB ADDRESS*, and *API-TENANT* will be unique to your obtained license.
+
+The .BoonLogic.license file will be consulted by the BoonNano Excel Add-in to successfully find and authenticate with your designated server.
+>**NOTE:** It is important that the file is named and placed correctly. >Check for:
+>  - the file starting with a period
+>  - both the B and the L in BoonLogic is capitalized
+>  - the extension is a .license file
