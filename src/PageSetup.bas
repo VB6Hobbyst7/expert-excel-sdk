@@ -140,6 +140,7 @@ Private Sub ResetBuffer()
     Application.Run ("management.CloseNano")
     Application.Run ("management.OpenNano")
     ' Application.Run ("results.GetBufferStatus")
+    On Error Resume Next
     Worksheets("BoonNano").Shapes("Cluster").Delete
     Range("numClusters,totalInferences,avgClusterTime").Value = 0
     Exit Sub
