@@ -92,10 +92,10 @@ Private Sub CloseCleanup()
         .Shapes("Cluster").Delete
         ' .Shapes("Results").Delete
         .Shapes("Configure").Delete
-        ' .Shapes("Reset").Delete
+        .Shapes("Reset").Delete
         .Shapes("closeBtn").Delete
         ' .Range("status") = ""
-        .Range("byteProcess,byteBuffer,byteWritten,numClusters,totalInferences,avgClusterTime,numAnomalies").Value = 0
+        .Range("byteProcess,byteBuffer,byteWritten,numClusters,totalInferences,avgClusterTime").Value = 0
     End With
     OpenButton
 
@@ -137,24 +137,26 @@ End Sub
 
 Private Sub ResetBuffer()
     On Error GoTo Err
+    
     Application.Run ("management.CloseNano")
     Application.Run ("management.OpenNano")
-    Application.Run ("results.GetBufferStatus")
-    Range("numClusters").Value = 0
+    ' Application.Run ("results.GetBufferStatus")
+    Range("numClusters,totalInferences,avgClusterTime").Value = 0
     Exit Sub
 
 Err:
+    MsgBox "ERROR: " & Err.Description
     Exit Sub
     
 End Sub
 
 Private Sub ResetBufferButton()
     Dim btn As Button
-    Set t = Worksheets("BoonNano").Range("H3:I3")
-    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 10, t.Top + 2, t.Width - 20, t.Height - 4)
+    Set t = Worksheets("BoonNano").Range("F2")
+    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 2, t.Top + 2, t.Width - 4, t.Height - 4)
     With btn
         .Name = "Reset"
-        .Caption = "Reset Buffer"
+        .Caption = "Reset"
         .OnAction = "ResetBuffer"
     End With
 End Sub
@@ -186,8 +188,8 @@ Private Function ParamHeaders() As Boolean
     End With
         
     With Worksheets("BoonNano")
-        .Range("A3,B3:B6,A7:A18").Font.Bold = True
-        With .Ragnge("A3")
+        .Range("A3,B3:B6,A7:A17").Font.Bold = True
+        With .Range("A3")
             .HorizontalAlignment = xlCenter
             .Value = "Configure Parameters"
         End With
@@ -279,8 +281,8 @@ Private Function ParamHeaders() As Boolean
         .Range("A17").Value = "Average cluster time (" & ChrW(181) & "s)"
         .Range("B17").Name = "avgClusterTime"
         
-        .Range("A18").Value = "Number of Anomalies"
-        .Range("B18").Name = "numAnomalies"
+'        .Range("A18").Value = "Number of Anomalies"
+'        .Range("B18").Name = "numAnomalies"
 
         ' color param headers
         With .Range("A7:B12")
@@ -292,7 +294,7 @@ Private Function ParamHeaders() As Boolean
         End With
         
         ' nano status headers
-        With .Range("A14:B18")
+        With .Range("A14:B17")
             With .Borders
                 .LineStyle = xlContinuous
                 .Weight = xlThin
@@ -342,7 +344,7 @@ Private Function BoonHeaders() As Boolean
     Worksheets("BoonNano").Range("A1").Font.Size = 28
     
     Dim pic As String, t As Range
-    Set t = Range("A1")
+    Set t = Range("A1:A2")
     pic = "https://raw.githubusercontent.com/boonlogic/boonlogic-rest-api/master/images/BoonLogic.png"
     On Error GoTo NoLogo
     Set Boonlogo = Worksheets("BoonNano").Pictures.Insert(pic)

@@ -101,7 +101,7 @@ JSONErr:
 
 End Function
 
-Private Function GetBufferStatus() As Boolean
+Function GetBufferStatus() As Variant
     GetBufferStatus = True
     
     Dim label As String
@@ -131,11 +131,12 @@ Private Function GetBufferStatus() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetBufferStatus = False
     Else
-        With Worksheets("BoonNano")
-            .Range("byteWritten").Value = json("totalBytesWritten")
-            .Range("byteProcess").Value = json("totalBytesProcessed")
-            .Range("byteBuffer").Value = json("totalBytesInBuffer")
-        End With
+        GetBufferStatus = Response.Content
+'        With Worksheets("BoonNano")
+'            .Range("byteWritten").Value = json("totalBytesWritten")
+'            .Range("byteProcess").Value = json("totalBytesProcessed")
+'            .Range("byteBuffer").Value = json("totalBytesInBuffer")
+'        End With
     End If
     
     ' Range("status").Value = "finished"
@@ -331,38 +332,39 @@ End Function
 
 Private Function ExportAnomalies() As Boolean
     Dim results As Variant, label As String, t As Integer
-    label = "Anomalies"
-    If WorksheetExists(label) Then
-        Worksheets(label).Cells.Clear
-    Else
-        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
-        NewSheet.Name = label
-    End If
-    Worksheets("BoonNano").Activate
-
-    Set results = GetResults
-
-    numAnomalies = 0
-    For i = 1 To results("RI").Count
-        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
-            numAnomalies = numAnomalies + 1
-            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
-
-
-            Next j
-            Selection.Rows(i).Copy
-            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
-        End If
-    Next i
-    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
+'    label = "Anomalies"
+'    If WorksheetExists(label) Then
+'        Worksheets(label).Cells.Clear
+'    Else
+'        Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
+'        NewSheet.Name = label
+'    End If
+'    Worksheets("BoonNano").Activate
+'
+     Set results = GetResults
+'
+'    numAnomalies = 0
+'    For i = 1 To results("RI").Count
+'        If results("RI")(i) >= Worksheets("BoonNano").Range("anomalyIndex").Value Then
+'            numAnomalies = numAnomalies + 1
+'            For j = 1 To Worksheets("BoonNano").Range("streamingWindowSize").Value
+'
+'
+'            Next j
+'            Selection.Rows(i).Copy
+'            Worksheets(label).Range("$A$" & numAnomalies).PasteSpecial (xlPasteValues)
+'        End If
+'    Next i
+'    Worksheets("BoonNano").Range("numAnomalies").Value = numAnomalies
     
-    MsgBox results("RI").Count
     label = "Results"
     If WorksheetExists(label) Then
         Worksheets(label).Cells.Clear
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
+        Worksheets("Results").Columns("G").Select
+        ActiveWindow.FreezePanes = True
     End If
     
     Worksheets(label).Rows(1).Font.Bold = True
@@ -384,8 +386,6 @@ Private Function ExportAnomalies() As Boolean
         .AutoFit
         .HorizontalAlignment = xlCenter
     End With
-    Worksheets("Results").Columns("G").Select
-    ActiveWindow.FreezePanes = True
     
     Worksheets("BoonNano").Activate
 

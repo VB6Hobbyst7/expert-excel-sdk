@@ -69,7 +69,7 @@ Private Function AutotuneConfig() As Boolean
             col = Split(Cells(1, Selection.Columns(i + 1).Column).Address, "$")(1)
         Next i
         On Error Resume Next
-         Worksheets("BoonNano").Shapes("Cluster").Delete
+        Worksheets("BoonNano").Shapes("Cluster").Delete
         Application.Run ("PageSetup.ClusterButton")
         
     End If
@@ -247,13 +247,15 @@ Private Function SetConfig() As Boolean
         Range("numClusters").Value = 0
         Range("totalInferences").Value = 0
         Range("avgClusterTime").Value = 0
-        Range("numAnomalies").Value = 0
+'        Range("numAnomalies").Value = 0
 '        If Not (Application.Run("results.GetBufferStatus")) Then
 '            Exit Function
 '        End If
         On Error Resume Next
         Worksheets("BoonNano").Shapes("Cluster").Delete
         Application.Run ("PageSetup.ClusterButton")
+        Application.Run ("PageSetup.ResetBufferButton")
+        
     End If
     
     ' Range("status").Value = "finished"
