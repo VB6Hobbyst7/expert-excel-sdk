@@ -142,7 +142,7 @@ Private Sub ResetBuffer()
     ' Application.Run ("results.GetBufferStatus")
     On Error Resume Next
     Worksheets("BoonNano").Shapes("Cluster").Delete
-    Range("numClusters,totalInferences,avgClusterTime").Value = 0
+    Range("C3:XFD6,percentVariation,numericFormat,streamingWindowSize,accuracy,numFeatures,anomalyIndex,numClusters,totalInferences,avgClusterTime") = ""
     Exit Sub
 
 Err:

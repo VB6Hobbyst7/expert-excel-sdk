@@ -331,7 +331,8 @@ JSONErr:
 End Function
 
 Private Function ExportAnomalies() As Boolean
-    Dim results As Variant, label As String, t As Integer
+    Dim results As Variant, label As String, t As Integer, startRow As Integer
+    
 '    label = "Anomalies"
 '    If WorksheetExists(label) Then
 '        Worksheets(label).Cells.Clear
@@ -359,28 +360,32 @@ Private Function ExportAnomalies() As Boolean
     
     label = "Results"
     If WorksheetExists(label) Then
-        Worksheets(label).Cells.Clear
+        ' Worksheets(label).Cells.Clear
+        startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
+        ' Worksheets(label).Cells(Rows.Count, 1).End (xlUp)
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
         Worksheets("Results").Columns("G").Select
         ActiveWindow.FreezePanes = True
+        startRow = 1
+        Worksheets(label).Rows(1).Font.Bold = True
+        Worksheets(label).Cells(1, 1) = "Pattern Number"
+        Worksheets(label).Cells(1, 2) = "Cluster ID"
+        Worksheets(label).Cells(1, 3) = "Anomaly Index"
+        Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
+        Worksheets(label).Cells(1, 5) = "Frequency Index"
+        Worksheets(label).Cells(1, 6) = "Distance Index"
     End If
     
-    Worksheets(label).Rows(1).Font.Bold = True
-    Worksheets(label).Cells(1, 1) = "Pattern Number"
-    Worksheets(label).Cells(1, 2) = "Cluster ID"
-    Worksheets(label).Cells(1, 3) = "Anomaly Index"
-    Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
-    Worksheets(label).Cells(1, 5) = "Frequency Index"
-    Worksheets(label).Cells(1, 6) = "Distance Index"
+
     For i = 1 To results("RI").Count
-        Worksheets(label).Cells(i + 1, 1) = i
-        Worksheets(label).Cells(i + 1, 2) = results("ID")(i)
-        Worksheets(label).Cells(i + 1, 3) = results("RI")(i)
-        Worksheets(label).Cells(i + 1, 4) = results("SI")(i)
-        Worksheets(label).Cells(i + 1, 5) = results("FI")(i)
-        Worksheets(label).Cells(i + 1, 6) = results("DI")(i)
+        Worksheets(label).Cells(i + startRow, 1) = i + startRow - 1
+        Worksheets(label).Cells(i + startRow, 2) = results("ID")(i)
+        Worksheets(label).Cells(i + startRow, 3) = results("RI")(i)
+        Worksheets(label).Cells(i + startRow, 4) = results("SI")(i)
+        Worksheets(label).Cells(i + startRow, 5) = results("FI")(i)
+        Worksheets(label).Cells(i + startRow, 6) = results("DI")(i)
     Next i
     With Worksheets(label).Columns("A:F")
         .AutoFit
