@@ -131,7 +131,7 @@ Function GetBufferStatus() As Variant
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetBufferStatus = False
     Else
-        GetBufferStatus = Response.Content
+        GetBufferStatus = json("totalyBytesProcessed") ' Response.Content
 '        With Worksheets("BoonNano")
 '            .Range("byteWritten").Value = json("totalBytesWritten")
 '            .Range("byteProcess").Value = json("totalBytesProcessed")
@@ -170,10 +170,9 @@ Private Function LoadData() As Boolean
     
     Range("status").Value = "loading data"
     ' create selection as dictionary
-    Dim row As Integer, col As Integer, arrString As String, tmpStr As String
+    Dim row As Long, col As Long, arrString As String, tmpStr As String
     row = Selection.Rows.Count
     col = Selection.Columns.Count
-    arrString = ""
     
     If InStr(Application.OperatingSystem, "Windows") > 0 Then
         returnStr = vbNewLine
@@ -181,21 +180,6 @@ Private Function LoadData() As Boolean
         ' Macos or (linux??)
         returnStr = vbCr & vbNewLine
     End If
-    
-    Dim i As Long, j As Long
-    For i = 1 To row
-        tmpStr = ""
-        For j = 1 To col
-            tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
-        Next j
-        tmpStr = Right(tmpStr, Len(tmpStr) - 1)
-        arrString = arrString & tmpStr
-        If i = row Then
-            arrString = arrString & returnStr
-        Else
-            arrString = arrString & ","
-        End If
-    Next i
     
     Dim Client As New WebClient
 
@@ -219,10 +203,32 @@ Private Function LoadData() As Boolean
     Request.AddQuerystringParam "fileType", "csv"
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
-    Request.AddQuerystringParam "appendData", "false"
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
     
-    Dim PostBody As String
+    Dim PostBody As String, Response As WebResponse, json As Object, dataSubsection As Long, i As Long, j As Long
+    
+    ''''''''''''''''
+    dataSubsection = 1
+    
+    Request.AddQuerystringParam "appendData", "false"
+    Do While dataSubsection <= row
+    
+    arrString = ""
+    
+    MsgBox dataSubsection
+    For i = dataSubsection To WorksheetFunction.Min(row, 30000 / col)
+        tmpStr = ""
+        For j = 1 To col
+            tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
+        Next j
+        tmpStr = Right(tmpStr, Len(tmpStr) - 1)
+        arrString = arrString & tmpStr
+        If i = row Or 30000 / col Then
+            arrString = arrString & returnStr
+        Else
+            arrString = arrString & ","
+        End If
+    Next i
     PostBody = "--" & bndry & returnStr _
     & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
     & "Content-Type: application/vnd.ms-excel" & returnStr & returnStr _
@@ -231,11 +237,9 @@ Private Function LoadData() As Boolean
 
     Request.Body = PostBody
     
-    Dim Response As WebResponse
     Request.ResponseFormat = WebFormat.json
     Set Response = Client.Execute(Request)
     
-    Dim json As Object
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr
         Set json = JsonConverter.ParseJson(Response.Content)
@@ -244,6 +248,12 @@ Private Function LoadData() As Boolean
         LoadData = False
         Exit Function
     End If
+    dataSubsection = dataSubsection + 30000 / col
+    
+    Request.AddQuerystringParam "appendData", "true"
+    Loop
+    
+    ''''''''''''''''
     
     Range("status").Value = "finished"
     
