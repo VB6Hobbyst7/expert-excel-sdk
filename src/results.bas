@@ -211,19 +211,19 @@ Private Function LoadData() As Boolean
     dataSubsection = 1
     
     Request.AddQuerystringParam "appendData", "false"
-    Do While dataSubsection <= row
+    ' Do While dataSubsection <= row
     
     arrString = ""
     
-    MsgBox dataSubsection
-    For i = dataSubsection To WorksheetFunction.Min(row, 30000 / col)
+    ' MsgBox dataSubsection
+    For i = dataSubsection To row ' WorksheetFunction.Min(row, 30000 / col)
         tmpStr = ""
         For j = 1 To col
             tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
-        If i = row Or 30000 / col Then
+        If i = row Then ' Or 30000 / col
             arrString = arrString & returnStr
         Else
             arrString = arrString & ","
@@ -248,10 +248,10 @@ Private Function LoadData() As Boolean
         LoadData = False
         Exit Function
     End If
-    dataSubsection = dataSubsection + 30000 / col
+    ' dataSubsection = dataSubsection + 30000 / col
     
-    Request.AddQuerystringParam "appendData", "true"
-    Loop
+    ' Request.AddQuerystringParam "appendData", "true"
+    ' Loop
     
     ''''''''''''''''
     
