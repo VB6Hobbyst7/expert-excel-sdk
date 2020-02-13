@@ -191,9 +191,15 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
     If Append Then
+<<<<<<< HEAD
         Request.AddQuerystringParam "appendData", "true"
     Else
         Request.AddQuerystringParam "appendData", "false"
+=======
+            Request.AddQuerystringParam "appendData", "true"
+    Else
+    Request.AddQuerystringParam "appendData", "true"
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
     End If
     
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
@@ -254,7 +260,11 @@ Private Function PostDataLoop() As Boolean
     Dim bndry As String
     bndry = "----WebKitFormBoundaryW34T6HD7JCW8"
     
+<<<<<<< HEAD
     Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long
+=======
+    Dim PostBody As String, appendQ As String, dataSubsection As Long, i As Long, j As Long
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
     
     ''''''''''''''''
     dataSubsection = 1
@@ -270,7 +280,11 @@ Private Function PostDataLoop() As Boolean
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
+<<<<<<< HEAD
         If i = row Or i = dataSubsection + WorksheetFunction.Floor(30000 / col, 1) - 1 Then
+=======
+        If i = row Or i = 30000 / col Then
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
             arrString = arrString & returnStr
         Else
             arrString = arrString & ","
@@ -289,7 +303,11 @@ Private Function PostDataLoop() As Boolean
         Exit Function
     End If
     
+<<<<<<< HEAD
     ' MsgBox GetBufferStatus() & dataSubsection
+=======
+    MsgBox GetBufferStatus()
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
     dataSubsection = dataSubsection + 30000 / col
     
     Loop
@@ -392,17 +410,27 @@ Private Function ExportAnomalies() As Boolean
     
     label = "Results"
     If WorksheetExists(label) Then
+<<<<<<< HEAD
         Worksheets(label).Cells.Clear
         ' startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
+=======
+        ' Worksheets(label).Cells.Clear
+        startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
+        ' Worksheets(label).Cells(Rows.Count, 1).End (xlUp)
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
         Worksheets("Results").Columns("G").Select
         ActiveWindow.FreezePanes = True
+<<<<<<< HEAD
         
     End If
     
     startRow = 1
+=======
+        startRow = 1
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
         Worksheets(label).Rows(1).Font.Bold = True
         Worksheets(label).Cells(1, 1) = "Pattern Number"
         Worksheets(label).Cells(1, 2) = "Cluster ID"
@@ -410,6 +438,11 @@ Private Function ExportAnomalies() As Boolean
         Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
         Worksheets(label).Cells(1, 5) = "Frequency Index"
         Worksheets(label).Cells(1, 6) = "Distance Index"
+<<<<<<< HEAD
+=======
+    End If
+    
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
 
     For i = 1 To results("RI").Count
         Worksheets(label).Cells(i + startRow, 1) = i + startRow - 1
