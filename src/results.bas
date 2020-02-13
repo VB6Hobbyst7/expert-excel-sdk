@@ -155,7 +155,7 @@ JSONErr:
 
 End Function
 
-Private Function LoadData() As Boolean
+Private Function LoadData(PostBody As String, Optional Append As Boolean = False) As Boolean
     LoadData = True
 
     On Error GoTo Err
@@ -167,35 +167,6 @@ Private Function LoadData() As Boolean
     
     Dim label As String
     label = Range("currentNano").Value
-    
-    Range("status").Value = "loading data"
-    ' create selection as dictionary
-    Dim row As Integer, col As Integer, arrString As String, tmpStr As String
-    row = Selection.Rows.Count
-    col = Selection.Columns.Count
-    arrString = ""
-    
-    If InStr(Application.OperatingSystem, "Windows") > 0 Then
-        returnStr = vbNewLine
-    Else
-        ' Macos or (linux??)
-        returnStr = vbCr & vbNewLine
-    End If
-    
-    Dim i As Long, j As Long
-    For i = 1 To row
-        tmpStr = ""
-        For j = 1 To col
-            tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
-        Next j
-        tmpStr = Right(tmpStr, Len(tmpStr) - 1)
-        arrString = arrString & tmpStr
-        If i = row Then
-            arrString = arrString & returnStr
-        Else
-            arrString = arrString & ","
-        End If
-    Next i
     
     Dim Client As New WebClient
 
@@ -219,19 +190,22 @@ Private Function LoadData() As Boolean
     Request.AddQuerystringParam "fileType", "csv"
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
-    Request.AddQuerystringParam "appendData", "false"
+    If Append Then
+<<<<<<< HEAD
+        Request.AddQuerystringParam "appendData", "true"
+    Else
+        Request.AddQuerystringParam "appendData", "false"
+=======
+            Request.AddQuerystringParam "appendData", "true"
+    Else
+    Request.AddQuerystringParam "appendData", "true"
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+    End If
+    
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
     
-    Dim PostBody As String
-    PostBody = "--" & bndry & returnStr _
-    & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
-    & "Content-Type: application/vnd.ms-excel" & returnStr & returnStr _
-    & arrString & returnStr _
-    & "--" & bndry & "--" & returnStr
-
     Request.Body = PostBody
     
-    Dim Response As WebResponse
     Request.ResponseFormat = WebFormat.json
     Set Response = Client.Execute(Request)
     
@@ -244,8 +218,6 @@ Private Function LoadData() As Boolean
         LoadData = False
         Exit Function
     End If
-    
-    Range("status").Value = "finished"
     
 Exit Function
     
@@ -269,11 +241,89 @@ JSONErr:
 
 End Function
 
+Private Function PostDataLoop() As Boolean
+    PostDataLoop = True
+
+    Range("status").Value = "loading data"
+    ' create selection as dictionary
+    Dim row As Long, col As Long, arrString As String, tmpStr As String
+    row = Selection.Rows.Count
+    col = Selection.Columns.Count
+    
+    If InStr(Application.OperatingSystem, "Windows") > 0 Then
+        returnStr = vbNewLine
+    Else
+        ' Macos or (linux??)
+        returnStr = vbCr & vbNewLine
+    End If
+    
+    Dim bndry As String
+    bndry = "----WebKitFormBoundaryW34T6HD7JCW8"
+    
+<<<<<<< HEAD
+    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long
+=======
+    Dim PostBody As String, appendQ As String, dataSubsection As Long, i As Long, j As Long
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+    
+    ''''''''''''''''
+    dataSubsection = 1
+    
+    Do While dataSubsection <= row
+    
+    arrString = ""
+    
+    For i = dataSubsection To WorksheetFunction.Min(row, dataSubsection + 30000 / col)
+        tmpStr = ""
+        For j = 1 To col
+            tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
+        Next j
+        tmpStr = Right(tmpStr, Len(tmpStr) - 1)
+        arrString = arrString & tmpStr
+<<<<<<< HEAD
+        If i = row Or i = dataSubsection + WorksheetFunction.Floor(30000 / col, 1) - 1 Then
+=======
+        If i = row Or i = 30000 / col Then
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+            arrString = arrString & returnStr
+        Else
+            arrString = arrString & ","
+        End If
+    Next i
+    PostBody = "--" & bndry & returnStr _
+    & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
+    & "Content-Type: application/vnd.ms-excel" & returnStr & returnStr _
+    & arrString & returnStr _
+    & "--" & bndry & "--" & returnStr
+
+    appendQ = dataSubsection <> 1
+    
+    If Not (LoadData(PostBody, appendQ)) Then
+        PostDataLoop = False
+        Exit Function
+    End If
+    
+<<<<<<< HEAD
+    ' MsgBox GetBufferStatus() & dataSubsection
+=======
+    MsgBox GetBufferStatus()
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+    dataSubsection = dataSubsection + 30000 / col
+    
+    Loop
+    
+    ''''''''''''''''
+    
+    Range("status").Value = "finished"
+
+End Function
+
+
 
 Private Function RunNano() As Boolean
     RunNano = True
     On Error GoTo Err
-    If Not (LoadData) Then
+    If Not (PostDataLoop) Then
         RunNano = False
         Exit Function
     End If
@@ -331,7 +381,8 @@ JSONErr:
 End Function
 
 Private Function ExportAnomalies() As Boolean
-    Dim results As Variant, label As String, t As Integer
+    Dim results As Variant, label As String, t As Integer, startRow As Integer
+    
 '    label = "Anomalies"
 '    If WorksheetExists(label) Then
 '        Worksheets(label).Cells.Clear
@@ -359,28 +410,47 @@ Private Function ExportAnomalies() As Boolean
     
     label = "Results"
     If WorksheetExists(label) Then
+<<<<<<< HEAD
         Worksheets(label).Cells.Clear
+        ' startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
+=======
+        ' Worksheets(label).Cells.Clear
+        startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
+        ' Worksheets(label).Cells(Rows.Count, 1).End (xlUp)
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
         Worksheets("Results").Columns("G").Select
         ActiveWindow.FreezePanes = True
+<<<<<<< HEAD
+        
     End If
     
-    Worksheets(label).Rows(1).Font.Bold = True
-    Worksheets(label).Cells(1, 1) = "Pattern Number"
-    Worksheets(label).Cells(1, 2) = "Cluster ID"
-    Worksheets(label).Cells(1, 3) = "Anomaly Index"
-    Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
-    Worksheets(label).Cells(1, 5) = "Frequency Index"
-    Worksheets(label).Cells(1, 6) = "Distance Index"
+    startRow = 1
+=======
+        startRow = 1
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+        Worksheets(label).Rows(1).Font.Bold = True
+        Worksheets(label).Cells(1, 1) = "Pattern Number"
+        Worksheets(label).Cells(1, 2) = "Cluster ID"
+        Worksheets(label).Cells(1, 3) = "Anomaly Index"
+        Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
+        Worksheets(label).Cells(1, 5) = "Frequency Index"
+        Worksheets(label).Cells(1, 6) = "Distance Index"
+<<<<<<< HEAD
+=======
+    End If
+    
+>>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
+
     For i = 1 To results("RI").Count
-        Worksheets(label).Cells(i + 1, 1) = i
-        Worksheets(label).Cells(i + 1, 2) = results("ID")(i)
-        Worksheets(label).Cells(i + 1, 3) = results("RI")(i)
-        Worksheets(label).Cells(i + 1, 4) = results("SI")(i)
-        Worksheets(label).Cells(i + 1, 5) = results("FI")(i)
-        Worksheets(label).Cells(i + 1, 6) = results("DI")(i)
+        Worksheets(label).Cells(i + startRow, 1) = i + startRow - 1
+        Worksheets(label).Cells(i + startRow, 2) = results("ID")(i)
+        Worksheets(label).Cells(i + startRow, 3) = results("RI")(i)
+        Worksheets(label).Cells(i + startRow, 4) = results("SI")(i)
+        Worksheets(label).Cells(i + startRow, 5) = results("FI")(i)
+        Worksheets(label).Cells(i + startRow, 6) = results("DI")(i)
     Next i
     With Worksheets(label).Columns("A:F")
         .AutoFit
