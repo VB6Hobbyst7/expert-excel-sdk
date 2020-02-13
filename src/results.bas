@@ -191,9 +191,9 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
     If Append Then
-            Request.AddQuerystringParam "appendData", "true"
+        Request.AddQuerystringParam "appendData", "true"
     Else
-    Request.AddQuerystringParam "appendData", "true"
+        Request.AddQuerystringParam "appendData", "false"
     End If
     
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
@@ -254,7 +254,7 @@ Private Function PostDataLoop() As Boolean
     Dim bndry As String
     bndry = "----WebKitFormBoundaryW34T6HD7JCW8"
     
-    Dim PostBody As String, appendQ As String, dataSubsection As Long, i As Long, j As Long
+    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long
     
     ''''''''''''''''
     dataSubsection = 1
@@ -270,7 +270,7 @@ Private Function PostDataLoop() As Boolean
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
-        If i = row Or i = 30000 / col Then
+        If i = row Or i = dataSubsection + WorksheetFunction.Floor(30000 / col, 1) - 1 Then
             arrString = arrString & returnStr
         Else
             arrString = arrString & ","
@@ -289,7 +289,7 @@ Private Function PostDataLoop() As Boolean
         Exit Function
     End If
     
-    MsgBox GetBufferStatus()
+    ' MsgBox GetBufferStatus() & dataSubsection
     dataSubsection = dataSubsection + 30000 / col
     
     Loop
@@ -392,15 +392,17 @@ Private Function ExportAnomalies() As Boolean
     
     label = "Results"
     If WorksheetExists(label) Then
-        ' Worksheets(label).Cells.Clear
-        startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
-        ' Worksheets(label).Cells(Rows.Count, 1).End (xlUp)
+        Worksheets(label).Cells.Clear
+        ' startRow = Worksheets(label).Cells(Rows.Count, 1).End(xlUp) + 1
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
         Worksheets("Results").Columns("G").Select
         ActiveWindow.FreezePanes = True
-        startRow = 1
+        
+    End If
+    
+    startRow = 1
         Worksheets(label).Rows(1).Font.Bold = True
         Worksheets(label).Cells(1, 1) = "Pattern Number"
         Worksheets(label).Cells(1, 2) = "Cluster ID"
@@ -408,8 +410,6 @@ Private Function ExportAnomalies() As Boolean
         Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
         Worksheets(label).Cells(1, 5) = "Frequency Index"
         Worksheets(label).Cells(1, 6) = "Distance Index"
-    End If
-    
 
     For i = 1 To results("RI").Count
         Worksheets(label).Cells(i + startRow, 1) = i + startRow - 1
