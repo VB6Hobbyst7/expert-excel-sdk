@@ -130,31 +130,47 @@ Private Sub CheckBlank(Name As String, Optional config As Object = Nothing, Opti
             End If
             
         ElseIf InStr(Name, "3") <> 0 Then ' check if in weights row
-            If config Is Nothing Or index >= config("features").Count Then
+            If config Is Nothing Then
+            .Range(Name).Value = 1
+            Else
+            If index >= config("features").Count Then
             .Range(Name).Value = 1
             Else
             .Range(Name).Value = config("features")(index + 1)("weight")
             End If
+            End If
             
         ElseIf InStr(Name, "4") <> 0 Then ' check if in maxes row
-            If config Is Nothing Or index >= config("features").Count Then
+            If config Is Nothing Then
+            .Range(Name).Value = 10
+            Else
+            If index >= config("features").Count Then
             .Range(Name).Value = 10
             Else
             .Range(Name).Value = config("features")(index + 1)("maxVal")
             End If
+            End If
             
         ElseIf InStr(Name, "5") <> 0 Then ' check if in mins row
-            If config Is Nothing Or index >= config("features").Count Then
+            If config Is Nothing Then
+            .Range(Name).Value = 0
+            Else
+            If index >= config("features").Count Then
             .Range(Name).Value = 0
             Else
             .Range(Name).Value = config("features")(index + 1)("minVal")
             End If
+            End If
             
         ElseIf InStr(Name, "6") <> 0 Then ' check if in labels row
-            If config Is Nothing Or index >= config("features").Count Then
+            If config Is Nothing Then
+            .Range(Name).Value = ""
+            Else
+            If index >= config("features").Count Then
             .Range(Name).Value = ""
             Else
             .Range(Name).Value = config("features")(index + 1)("label")
+            End If
             End If
             
         ElseIf Name = "anomalyIndex" Then
@@ -222,8 +238,6 @@ Private Function SetConfig() As Boolean
     
     Dim currentConfig As Object
     Set currentConfig = GetConfig
-    
-    MsgBox currentConfig("features").Count
     
     ' create config dictionary
     Dim config As New Dictionary
