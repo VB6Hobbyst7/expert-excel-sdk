@@ -8,11 +8,7 @@ Private Function AutotuneConfig() As Boolean
         AutotuneConfig = False
         Exit Function
     End If
-<<<<<<< HEAD
     If Not (Application.Run("results.PostDataLoop")) Then
-=======
-    If Not (Application.Run("results.LoadData")) Then
->>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
         AutotuneConfig = False
         Exit Function
     End If
