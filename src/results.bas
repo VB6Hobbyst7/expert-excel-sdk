@@ -263,24 +263,22 @@ Private Function PostDataLoop() As Boolean
     
     arrString = ""
     
-    For i = dataSubsection To WorksheetFunction.Min(row, dataSubsection + WorksheetFunction.Floor(3000000 / col, 1) - 1)
+    For i = dataSubsection To WorksheetFunction.Min(row, dataSubsection + 30000 / col - 1)
         tmpStr = ""
         For j = 1 To col
             tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
-        If i = row Or i = dataSubsection + WorksheetFunction.Floor(3000000 / col, 1) - 1 Then
+        If i = row Or i = dataSubsection + WorksheetFunction.Floor(30000 / col, 1) - 1 Then
             arrString = arrString & returnStr
-            MsgBox dataSubsection & " " & row
         Else
             arrString = arrString & ","
         End If
     Next i
-    MsgBox Right(arrString, 10) & i
     PostBody = "--" & bndry & returnStr _
     & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
-    & "Content-Type: application/json" & returnStr & returnStr _
+    & "Content-Type: application/vnd.ms-excel" & returnStr & returnStr _
     & arrString & returnStr _
     & "--" & bndry & "--" & returnStr
 
@@ -291,7 +289,8 @@ Private Function PostDataLoop() As Boolean
         Exit Function
     End If
     
-    dataSubsection = dataSubsection + WorksheetFunction.Floor(3000000 / col, 1)
+    ' MsgBox GetBufferStatus() & dataSubsection
+    dataSubsection = dataSubsection + 30000 / col
     
     Loop
     
