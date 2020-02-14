@@ -4,8 +4,8 @@ This Excel Add-in allows users to quickly process their data using the Boon Logi
 
 >**NOTE:** In order to use this package, it is necessary to acquire a BoonNano license from Boon Logic, Inc.  A startup email will be sent providing the details for using this package.
 
-- __Website__: [https://github.com/boonlogic/expert-matlab-sdk](https://github.com/boonlogic/expert-matlab-sdk)
-- __Documentation__: [https://github.com/boonlogic/expert-excel-sdk/Documentation](./Documentation)
+- __Website__: [https://github.com/boonlogic/expert-excel-sdk](https://github.com/boonlogic/expert-matlab-sdk)
+- __Documentation__: [https://github.com/boonlogic/expert-excel-sdk/tree/master/Documentation](./Documentation)
 
 --------------------------
 ### Loading the Excel Add-in

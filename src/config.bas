@@ -8,11 +8,7 @@ Private Function AutotuneConfig() As Boolean
         AutotuneConfig = False
         Exit Function
     End If
-<<<<<<< HEAD
     If Not (Application.Run("results.PostDataLoop")) Then
-=======
-    If Not (Application.Run("results.LoadData")) Then
->>>>>>> 6ecc955268a4399032697aa940f83ea9c757a87b
         AutotuneConfig = False
         Exit Function
     End If
@@ -97,30 +93,89 @@ JSONErr:
 
 End Function
 
-Private Sub CheckBlank(Name As String)
+Private Sub CheckBlank(Name As String, Optional config As Object = Nothing, Optional index As Long = 0)
     With Worksheets("BoonNano")
     If IsEmpty(.Range(Name)) Then
         If Name = "numFeatures" Then
             .Range(Name).Value = Selection.Columns.Count
+            
         ElseIf Name = "accuracy" Then
+            If config Is Nothing Then
             .Range(Name).Value = 0.99
+            Else
+            .Range(Name).Value = config(Name)
+            End If
+            
         ElseIf Name = "streamingWindowSize" Then
+            If config Is Nothing Then
             .Range(Name).Value = 1
+            Else
+            .Range(Name).Value = config(Name)
+            End If
+            
         ElseIf Name = "numericFormat" Then
+            If config Is Nothing Then
             .Range(Name).Value = GetType
             .Range(Name).HorizontalAlignment = xlRight
+            Else
+            .Range(Name).Value = config(Name)
+            .Range(Name).HorizontalAlignment = xlRight
+            End If
+            
         ElseIf Name = "percentVariation" Then
+            If config Is Nothing Then
             .Range(Name).Value = 0.05
+            Else
+            .Range(Name).Value = config(Name)
+            End If
+            
         ElseIf InStr(Name, "3") <> 0 Then ' check if in weights row
+            If config Is Nothing Then
             .Range(Name).Value = 1
+            Else
+            If index >= config("features").Count Then
+            .Range(Name).Value = 1
+            Else
+            .Range(Name).Value = config("features")(index + 1)("weight")
+            End If
+            End If
+            
         ElseIf InStr(Name, "4") <> 0 Then ' check if in maxes row
+            If config Is Nothing Then
             .Range(Name).Value = 10
+            Else
+            If index >= config("features").Count Then
+            .Range(Name).Value = 10
+            Else
+            .Range(Name).Value = config("features")(index + 1)("maxVal")
+            End If
+            End If
+            
         ElseIf InStr(Name, "5") <> 0 Then ' check if in mins row
+            If config Is Nothing Then
             .Range(Name).Value = 0
+            Else
+            If index >= config("features").Count Then
+            .Range(Name).Value = 0
+            Else
+            .Range(Name).Value = config("features")(index + 1)("minVal")
+            End If
+            End If
+            
         ElseIf InStr(Name, "6") <> 0 Then ' check if in labels row
+            If config Is Nothing Then
             .Range(Name).Value = ""
+            Else
+            If index >= config("features").Count Then
+            .Range(Name).Value = ""
+            Else
+            .Range(Name).Value = config("features")(index + 1)("label")
+            End If
+            End If
+            
         ElseIf Name = "anomalyIndex" Then
             .Range(Name).Value = 1000
+            
         End If
     End If
     End With
@@ -181,36 +236,39 @@ Private Function SetConfig() As Boolean
     Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
     Request.ContentType = "application/json"
     
+    Dim currentConfig As Object
+    Set currentConfig = GetConfig
+    
     ' create config dictionary
     Dim config As New Dictionary
     Dim tmpName As String
     
     tmpName = "accuracy"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     config.Add tmpName, Range(tmpName).Value
     
     Dim features() As Variant
-    Dim col As String
+    Dim col As String, i As Long
     col = Split(Selection.Address, "$")(1)
     tmpName = "numFeatures"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     ReDim features(Range(tmpName).Value - 1) As Variant
     For i = LBound(features) To UBound(features)
         Set features(i) = New Dictionary
         tmpName = col & "5"
-        CheckBlank (tmpName)
+        CheckBlank tmpName, config:=currentConfig, index:=i
         features(i).Add "minVal", Range(tmpName).Value
         
         tmpName = col & "4"
-        CheckBlank (tmpName)
+        CheckBlank tmpName, config:=currentConfig, index:=i
         features(i).Add "maxVal", Range(tmpName).Value
         
         tmpName = col & "3"
-        CheckBlank (tmpName)
+        CheckBlank tmpName, config:=currentConfig, index:=i
         features(i).Add "weight", Range(tmpName).Value
         
         tmpName = col & "6"
-        CheckBlank (tmpName)
+        CheckBlank tmpName, config:=currentConfig, index:=i
         features(i).Add "label", Range(tmpName).Value
         
         
@@ -219,19 +277,19 @@ Private Function SetConfig() As Boolean
     config.Add "features", features
     
     tmpName = "numericFormat"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     config.Add tmpName, Range(tmpName).Value
         
     tmpName = "percentVariation"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     config.Add tmpName, Range(tmpName).Value
     
     tmpName = "streamingWindowSize"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     config.Add tmpName, Range(tmpName).Value
     
     tmpName = "anomalyIndex"
-    CheckBlank (tmpName)
+    CheckBlank tmpName, config:=currentConfig
     
     ' -----
 
@@ -281,4 +339,62 @@ JSONErr:
     Exit Function
 
 End Function
+
+Private Function GetConfig() As Object
+
+    Dim label As String
+    label = Range("currentNano").Value
+    
+    Dim Client As New WebClient
+    
+    On Error GoTo Err
+    Client.BaseUrl = Worksheets(label).Range("url").Value
+    Client.TimeoutMs = 75000
+    
+    Dim Request As New WebRequest
+    Request.RequestFormat = WebFormat.json
+    Request.ResponseFormat = WebFormat.json
+    
+    Request.Resource = "clusterConfig/{label}"
+    Request.Method = WebMethod.HttpGet
+    Request.AddUrlSegment "label", label
+    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
+    Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
+    Request.ContentType = "application/json"
+
+    Dim Response As WebResponse
+    Set Response = Client.Execute(Request)
+    
+    Dim json As Object
+    On Error GoTo JSONErr
+    Set json = WebHelpers.ParseJson(Response.Content)
+    If Response.StatusCode <> 200 Then
+    
+        If Response.StatusCode <> 400 Then
+            MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
+        End If
+        Set GetConfig = Nothing
+        Exit Function
+    Else
+        Set GetConfig = json
+
+    End If
+    Exit Function
+
+NanoErr:
+    GetConfig = False
+    Exit Function
+
+Err:
+    MsgBox "Configure failed: " & Err.Description
+    GetConfig = False
+    Exit Function
+    
+JSONErr:
+    MsgBox "Response error: set config"
+    GetConfig = False
+    Exit Function
+
+End Function
+
 
