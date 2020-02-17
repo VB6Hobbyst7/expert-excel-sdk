@@ -334,7 +334,7 @@ Err:
     Exit Function
     
 JSONErr:
-    MsgBox "Response error: set config"
+    MsgBox "Json response error"
     SetConfig = False
     Exit Function
 
