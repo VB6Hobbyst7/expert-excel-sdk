@@ -190,14 +190,12 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
     Request.AddQuerystringParam "fileType", "csv"
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
+    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
     If Append Then
         Request.AddQuerystringParam "appendData", "true"
     Else
         Request.AddQuerystringParam "appendData", "false"
     End If
-    
-    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
-    
     Request.Body = PostBody
     
     Request.ResponseFormat = WebFormat.json
@@ -254,23 +252,25 @@ Private Function PostDataLoop() As Boolean
     Dim bndry As String
     bndry = "----WebKitFormBoundaryW34T6HD7JCW8"
     
-    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long
+    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long, maxRow As Long, factor As Long
     
     ''''''''''''''''
     dataSubsection = 1
+    factor = 15000 ' if too large, then the webrequest will fail with a 100 CONTINUE error
     
     Do While dataSubsection <= row
     
     arrString = ""
+    maxRow = WorksheetFunction.Min(row, dataSubsection + WorksheetFunction.Floor(factor / col, 1) - 1)
     
-    For i = dataSubsection To WorksheetFunction.Min(row, dataSubsection + 30000 / col - 1)
+    For i = dataSubsection To maxRow
         tmpStr = ""
         For j = 1 To col
             tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
-        If i = row Or i = dataSubsection + WorksheetFunction.Floor(30000 / col, 1) - 1 Then
+        If i = maxRow Then
             arrString = arrString & returnStr
         Else
             arrString = arrString & ","
@@ -278,7 +278,7 @@ Private Function PostDataLoop() As Boolean
     Next i
     PostBody = "--" & bndry & returnStr _
     & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
-    & "Content-Type: application/vnd.ms-excel" & returnStr & returnStr _
+    & "Content-Type: text/csv" & returnStr & returnStr _
     & arrString & returnStr _
     & "--" & bndry & "--" & returnStr
 
@@ -289,8 +289,7 @@ Private Function PostDataLoop() As Boolean
         Exit Function
     End If
     
-    ' MsgBox GetBufferStatus() & dataSubsection
-    dataSubsection = dataSubsection + 30000 / col
+    dataSubsection = dataSubsection + WorksheetFunction.Floor(factor / col, 1)
     
     Loop
     
