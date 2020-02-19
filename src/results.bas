@@ -252,28 +252,30 @@ Private Function PostDataLoop() As Boolean
     Dim bndry As String
     bndry = "----WebKitFormBoundaryW34T6HD7JCW8"
     
-    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long, maxRow As Long, factor As Long
+    Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long, maxRow As Long, factor As Long, bytes() As Byte, separator As String
+    
     
     ''''''''''''''''
     dataSubsection = 1
     factor = 15000 ' if too large, then the webrequest will fail with a 100 CONTINUE error
-    
+    separator = Application.International(xlListSeparator)
     Do While dataSubsection <= row
     
     arrString = ""
     maxRow = WorksheetFunction.Min(row, dataSubsection + WorksheetFunction.Floor(factor / col, 1) - 1)
     
+    ' ------CSV-------
     For i = dataSubsection To maxRow
         tmpStr = ""
         For j = 1 To col
-            tmpStr = tmpStr & "," & CStr(Selection.Cells(i, j))
+            tmpStr = tmpStr & separator & CStr(Selection.Cells(i, j))
         Next j
         tmpStr = Right(tmpStr, Len(tmpStr) - 1)
         arrString = arrString & tmpStr
         If i = maxRow Then
             arrString = arrString & returnStr
         Else
-            arrString = arrString & ","
+            arrString = arrString & separator
         End If
     Next i
     PostBody = "--" & bndry & returnStr _
@@ -281,6 +283,26 @@ Private Function PostDataLoop() As Boolean
     & "Content-Type: text/csv" & returnStr & returnStr _
     & arrString & returnStr _
     & "--" & bndry & "--" & returnStr
+
+    ' -------RAW-------
+'    Dim byteIndex As Long
+'    For i = dataSubsection To maxRow
+'        tmpStr = ""
+'        For j = 1 To col
+'            bytes = CStr(Selection.Cells(i, j))
+'            For byteIndex = 0 To UBound(bytes) - LBound(bytes)
+'                tmpStr = tmpStr & CStr(bytes(byteIndex))
+'            Next byteIndex
+'        Next j
+'        arrString = arrString & tmpStr
+'    Next i
+'    bytes = arrString
+'
+'    PostBody = "--" & bndry & returnStr _
+'    & "Content-Disposition: form-data; name=""data""; filename=""example.csv""" & returnStr _
+'    & "Content-Type: application/macbinary" & returnStr & returnStr _
+'    & arrString & returnStr _
+'    & "--" & bndry & "--" & returnStr
 
     appendQ = dataSubsection <> 1
     
@@ -298,8 +320,6 @@ Private Function PostDataLoop() As Boolean
     Range("status").Value = "finished"
 
 End Function
-
-
 
 Private Function RunNano() As Boolean
     RunNano = True
