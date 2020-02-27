@@ -50,7 +50,11 @@ Private Function AutotuneConfig() As Boolean
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         AutotuneConfig = False
     Else
-        Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#,##0.00")
+        If Application.International(xlDecimalSeparator) = "." Then
+            Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#,##0.00")
+        Else
+            Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "# ##0,00")
+        End If
         Dim col As String
         col = Split(Selection.Address, "$")(1)
         For i = 1 To Worksheets("BoonNano").Range("numFeatures")
