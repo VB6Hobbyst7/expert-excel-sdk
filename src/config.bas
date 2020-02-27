@@ -223,7 +223,6 @@ Private Function SetConfig() As Boolean
         
     tmpName = "percentVariation"
     CheckBlank (tmpName)
-    MsgBox CDbl(Replace(Range(tmpName).Value, ",", "."))
     config.Add tmpName, CDbl(Replace(Range(tmpName).Value, ",", "."))
     
     tmpName = "streamingWindowSize"
