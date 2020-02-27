@@ -362,19 +362,21 @@ Headers:
             .LineStyle = xlContinuous
             .Weight = xlThin
         End With
-        .FormatConditions.Add Type:=xlExpression, Formula1:="=ISBLANK(C1)"
-        .FormatConditions(.FormatConditions.Count).SetFirstPriority
-        With .FormatConditions(1)
-            With .Interior
-                .PatternColorIndex = xlAutomatic
-                .Color = RGB(255, 0, 0)
+        If Application.LanguageSettings.LanguageID(msoLanguageIDUI) = 1033 Then ' English
+            .FormatConditions.Add Type:=xlExpression, Formula1:="=ISBLANK(C1)"
+            .FormatConditions(.FormatConditions.Count).SetFirstPriority
+            With .FormatConditions(1)
+                With .Interior
+                    .PatternColorIndex = xlAutomatic
+                    .Color = RGB(255, 0, 0)
+                End With
+                With .Borders
+                    .LineStyle = xlContinuous
+                    .Weight = xlThin
+                End With
+            .StopIfTrue = False
             End With
-            With .Borders
-                .LineStyle = xlContinuous
-                .Weight = xlThin
-            End With
-        .StopIfTrue = False
-        End With
+        End If
     End With
     
             
@@ -390,19 +392,21 @@ Headers:
             .LineStyle = xlContinuous
             .Weight = xlThin
         End With
-        .FormatConditions.Add Type:=xlExpression, Formula1:="=ISBLANK(C2)"
-        .FormatConditions(.FormatConditions.Count).SetFirstPriority
-        With .FormatConditions(1)
-            With .Interior
-                .PatternColorIndex = xlAutomatic
-                .Color = RGB(255, 0, 0)
+        If Application.LanguageSettings.LanguageID(msoLanguageIDUI) = 1033 Then ' English
+            .FormatConditions.Add Type:=xlExpression, Formula1:="=ISBLANK(C2)"
+            .FormatConditions(.FormatConditions.Count).SetFirstPriority
+            With .FormatConditions(1)
+                With .Interior
+                    .PatternColorIndex = xlAutomatic
+                    .Color = RGB(255, 0, 0)
+                End With
+                With .Borders
+                    .LineStyle = xlContinuous
+                    .Weight = xlThin
+                End With
+            .StopIfTrue = False
             End With
-            With .Borders
-                .LineStyle = xlContinuous
-                .Weight = xlThin
-            End With
-        .StopIfTrue = False
-        End With
+        End If
     End With
     
         ' CLUSTER STATUS
@@ -427,19 +431,17 @@ Headers:
             .Name = "status"
             .Value = "finished"
             .Font.Size = 14
-            If Application.International(xlListSeparator) = "," Then
-                .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished"", ISBLANK(H2)=FALSE)"
-            Else
-                .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished""; ISBLANK(H2)=FALSE)"
-            End If
-            .FormatConditions(.FormatConditions.Count).SetFirstPriority
-            With .FormatConditions(1)
-                With .Interior
-                    .PatternColorIndex = xlAutomatic
-                    .Color = RGB(255, 0, 0)
+            If Application.LanguageSettings.LanguageID(msoLanguageIDUI) = 1033 Then ' English
+                .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished""" & Application.International(xlListSeparator) & "ISBLANK(H2)=FALSE)"
+                .FormatConditions(.FormatConditions.Count).SetFirstPriority
+                With .FormatConditions(1)
+                    With .Interior
+                        .PatternColorIndex = xlAutomatic
+                        .Color = RGB(255, 0, 0)
+                    End With
+                .StopIfTrue = False
                 End With
-            .StopIfTrue = False
-            End With
+            End If
         End With
 
     
