@@ -185,9 +185,17 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
         
     Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
     
+    Dim dataType As String
+    dataType = Application.International(xlListSeparator)
+    If dataType = "," Then
+        dataType = "csv"
+    Else
+        dataType = "csv-c"
+    End If
+    
     Request.AddUrlSegment "label", label
     Request.AddQuerystringParam "runNano", "false"
-    Request.AddQuerystringParam "fileType", "csv"
+    Request.AddQuerystringParam "fileType", dataType
     Request.AddQuerystringParam "gzip", "false"
     Request.AddQuerystringParam "results", ""
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
