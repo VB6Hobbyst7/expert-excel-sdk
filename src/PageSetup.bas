@@ -427,7 +427,11 @@ Headers:
             .Name = "status"
             .Value = "finished"
             .Font.Size = 14
-            .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished"", ISBLANK(H2)=FALSE)"
+            If Application.International(xlListSeparator) = "," Then
+                .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished"", ISBLANK(H2)=FALSE)"
+            Else
+                .FormatConditions.Add Type:=xlExpression, Formula1:="=And(H2<>""finished""; ISBLANK(H2)=FALSE)"
+            End If
             .FormatConditions(.FormatConditions.Count).SetFirstPriority
             With .FormatConditions(1)
                 With .Interior
