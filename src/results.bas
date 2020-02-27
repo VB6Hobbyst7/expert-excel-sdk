@@ -171,7 +171,7 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
     Dim Client As New WebClient
 
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 120000
     
     Dim Request As New WebRequest
     Request.RequestFormat = WebFormat.json

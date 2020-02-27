@@ -51,6 +51,7 @@ Private Function AutotuneConfig() As Boolean
         AutotuneConfig = False
     Else
         Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#,##0.00")
+        ' Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#" & Application.International(xlThousandsSeparator) & "##0" & Application.International(xlDecimalSeparator) & "00")
         Dim col As String
         col = Split(Selection.Address, "$")(1)
         For i = 1 To Worksheets("BoonNano").Range("numFeatures")
@@ -155,6 +156,8 @@ End Function
 
 Private Function SetConfig() As Boolean
     SetConfig = True
+    Application.DecimalSeparator = "."
+    Application.UseSystemSeparators = False
     
     Range("status").Value = "configuring"
     Dim label As String
@@ -183,7 +186,7 @@ Private Function SetConfig() As Boolean
     
     tmpName = "accuracy"
     CheckBlank (tmpName)
-    config.Add tmpName, Range(tmpName).Value
+    config.Add tmpName, CDbl(Replace(Range(tmpName).Value, ",", "."))
     
     Dim features() As Variant
     Dim col As String
@@ -195,11 +198,11 @@ Private Function SetConfig() As Boolean
         Set features(i) = New Dictionary
         tmpName = col & "5"
         CheckBlank (tmpName)
-        features(i).Add "minVal", Range(tmpName).Value
+        features(i).Add "minVal", CDbl(Replace(Range(tmpName).Value, ",", "."))
         
         tmpName = col & "4"
         CheckBlank (tmpName)
-        features(i).Add "maxVal", Range(tmpName).Value
+        features(i).Add "maxVal", CDbl(Replace(Range(tmpName).Value, ",", "."))
         
         tmpName = col & "3"
         CheckBlank (tmpName)
@@ -220,7 +223,8 @@ Private Function SetConfig() As Boolean
         
     tmpName = "percentVariation"
     CheckBlank (tmpName)
-    config.Add tmpName, Range(tmpName).Value
+    MsgBox CDbl(Replace(Range(tmpName).Value, ",", "."))
+    config.Add tmpName, CDbl(Replace(Range(tmpName).Value, ",", "."))
     
     tmpName = "streamingWindowSize"
     CheckBlank (tmpName)
@@ -236,6 +240,7 @@ Private Function SetConfig() As Boolean
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
+    ' Application.UseSystemSeparators = True
     Dim json As Object
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr
