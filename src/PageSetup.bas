@@ -286,6 +286,9 @@ End Function
 
 
 Private Function BoonHeaders() As Boolean
+
+    Application.ReferenceStyle = xlA1
+    
     BoonHeaders = True
     On Error GoTo Err
     ActiveWorkbook.ActiveSheet.Name = "BoonNano"
