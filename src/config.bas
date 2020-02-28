@@ -51,7 +51,6 @@ Private Function AutotuneConfig() As Boolean
         AutotuneConfig = False
     Else
         Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#,##0.00")
-        ' Worksheets("BoonNano").Range("percentVariation") = Format(json("percentVariation"), "#" & Application.International(xlThousandsSeparator) & "##0" & Application.International(xlDecimalSeparator) & "00")
         Dim col As String
         col = Split(Selection.Address, "$")(1)
         For i = 1 To Worksheets("BoonNano").Range("numFeatures")
@@ -239,7 +238,7 @@ Private Function SetConfig() As Boolean
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    ' Application.UseSystemSeparators = True
+    Application.UseSystemSeparators = True
     Dim json As Object
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr

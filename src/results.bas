@@ -267,6 +267,7 @@ Private Function PostDataLoop() As Boolean
     dataSubsection = 1
     factor = 15000 ' if too large, then the webrequest will fail with a 100 CONTINUE error
     separator = Application.International(xlListSeparator)
+    ' MsgBox Application.International(xlListSeparator)
     Do While dataSubsection <= row
     
     arrString = ""
