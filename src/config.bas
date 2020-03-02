@@ -156,7 +156,7 @@ End Function
 Private Function SetConfig() As Boolean
     SetConfig = True
     Application.DecimalSeparator = "."
-    Application.UseSystemSeparators = False
+    Application.UseSystemSeparators = True
     
     Range("status").Value = "configuring"
     Dim label As String
@@ -185,7 +185,7 @@ Private Function SetConfig() As Boolean
     
     tmpName = "accuracy"
     CheckBlank (tmpName)
-    config.Add tmpName, CDbl(Replace(Range(tmpName).Value, ",", "."))
+    config.Add tmpName, Range(tmpName).Value
     
     Dim features() As Variant
     Dim col As String
@@ -197,11 +197,11 @@ Private Function SetConfig() As Boolean
         Set features(i) = New Dictionary
         tmpName = col & "5"
         CheckBlank (tmpName)
-        features(i).Add "minVal", CDbl(Replace(Range(tmpName).Value, ",", "."))
+        features(i).Add "minVal", Range(tmpName).Value
         
         tmpName = col & "4"
         CheckBlank (tmpName)
-        features(i).Add "maxVal", CDbl(Replace(Range(tmpName).Value, ",", "."))
+        features(i).Add "maxVal", Range(tmpName).Value
         
         tmpName = col & "3"
         CheckBlank (tmpName)
@@ -222,7 +222,7 @@ Private Function SetConfig() As Boolean
         
     tmpName = "percentVariation"
     CheckBlank (tmpName)
-    config.Add tmpName, CDbl(Replace(Range(tmpName).Value, ",", "."))
+    config.Add tmpName, Range(tmpName).Value
     
     tmpName = "streamingWindowSize"
     CheckBlank (tmpName)
@@ -231,14 +231,13 @@ Private Function SetConfig() As Boolean
     tmpName = "anomalyIndex"
     CheckBlank (tmpName)
     
-    ' -----
+    ' ---------
 
     Set Request.Body = config
 
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    Application.UseSystemSeparators = True
     Dim json As Object
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr
@@ -250,10 +249,7 @@ Private Function SetConfig() As Boolean
         Range("numClusters").Value = 0
         Range("totalInferences").Value = 0
         Range("avgClusterTime").Value = 0
-'        Range("numAnomalies").Value = 0
-'        If Not (Application.Run("results.GetBufferStatus")) Then
-'            Exit Function
-'        End If
+        
         On Error Resume Next
         Worksheets("BoonNano").Shapes("Cluster").Delete
         Application.Run ("PageSetup.ClusterButton")

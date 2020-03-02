@@ -735,7 +735,7 @@ End Function
 ' @throws 11000 - Error during parsing
 ''
 Public Function ParseByFormat(Value As String, Format As WebFormat, _
-    Optional CustomFormat As String = "", Optional Bytes As Variant) As Object
+    Optional CustomFormat As String = "", Optional bytes As Variant) As Object
 
     On Error GoTo web_ErrorHandling
 
@@ -764,13 +764,13 @@ Public Function ParseByFormat(Value As String, Format As WebFormat, _
             Set web_Instance = web_Converter("Instance")
 
             If web_Converter("ParseType") = "Binary" Then
-                Set ParseByFormat = VBA.CallByName(web_Instance, web_Callback, VBA.vbMethod, Bytes)
+                Set ParseByFormat = VBA.CallByName(web_Instance, web_Callback, VBA.vbMethod, bytes)
             Else
                 Set ParseByFormat = VBA.CallByName(web_Instance, web_Callback, VBA.vbMethod, Value)
             End If
         Else
             If web_Converter("ParseType") = "Binary" Then
-                Set ParseByFormat = Application.Run(web_Callback, Bytes)
+                Set ParseByFormat = Application.Run(web_Callback, bytes)
             Else
                 Set ParseByFormat = Application.Run(web_Callback, Value)
             End If
@@ -1102,7 +1102,7 @@ Public Function Base64Decode(Encoded As Variant) As String
     Set web_XmlObj = CreateObject("MSXML2.DOMDocument")
     Set web_Node = web_XmlObj.createElement("b64")
 
-    web_Node.DataType = "bin.base64"
+    web_Node.dataType = "bin.base64"
     web_Node.Text = Encoded
     Base64Decode = VBA.StrConv(web_Node.nodeTypedValue, vbUnicode)
 
@@ -1934,7 +1934,7 @@ Private Function web_AnsiBytesToBase64(web_Bytes() As Byte)
     Set web_XmlObj = CreateObject("MSXML2.DOMDocument")
     Set web_Node = web_XmlObj.createElement("b64")
 
-    web_Node.DataType = "bin.base64"
+    web_Node.dataType = "bin.base64"
     web_Node.nodeTypedValue = web_Bytes
     web_AnsiBytesToBase64 = web_Node.Text
 
