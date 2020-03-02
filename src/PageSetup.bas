@@ -40,8 +40,6 @@ Private Sub GetButtons()
         AutotuneButton
         ByFeatureCheckbox
         ConfigureButton
-        ' ResetBufferButton
-        ' ResultsButton
         Worksheets("BoonNano").Shapes("openBtn").Delete
         CloseButton
         On Error GoTo Err
@@ -90,7 +88,6 @@ Private Sub CloseCleanup()
         .Shapes("Autotune").Delete
         .Shapes("ByFeature").Delete
         .Shapes("Cluster").Delete
-        ' .Shapes("Results").Delete
         .Shapes("Configure").Delete
         .Shapes("Reset").Delete
         .Shapes("closeBtn").Delete
@@ -139,7 +136,6 @@ Private Sub ResetBuffer()
     On Error GoTo Err
     Application.Run ("management.CloseNano")
     Application.Run ("management.OpenNano")
-    ' Application.Run ("results.GetBufferStatus")
     On Error Resume Next
     Worksheets("BoonNano").Shapes("Cluster").Delete
     Range("C3:XFD6,percentVariation,numericFormat,streamingWindowSize,accuracy,numFeatures,anomalyIndex,numClusters,totalInferences,avgClusterTime") = ""
@@ -220,21 +216,6 @@ Private Function ParamHeaders() As Boolean
         .Range("B10").Name = "accuracy"
         .Range("B11").Name = "numFeatures"
         .Range("B12").Name = "anomalyIndex"
-    
-'        ' BUFFER DATA
-'        .Range("A15:B15").Merge
-'        With .Range("A15")
-'            .Value = "Data Buffer"
-'            .Font.Size = 14
-'            .HorizontalAlignment = xlCenter
-'        End With
-'        .Range("A16").Value = "Bytes in buffer"
-'        .Range("A17").Value = "Bytes processed"
-'        .Range("A18").Value = "Bytes written"
-'
-'        .Range("B16").Name = "byteBuffer"
-'        .Range("B17").Name = "byteProcess"
-'        .Range("B18").Name = "byteWritten"
 '
         ' CLUSTER SUMMARY
         .Range("A14:B14").Merge
@@ -309,7 +290,6 @@ Private Function BoonHeaders() As Boolean
     
     ' add text formating
     With Worksheets("BoonNano").Range("A1:A2")
-        ' .Value = "BoonLogic"
         .Merge
         .HorizontalAlignment = xlCenter
     End With

@@ -132,11 +132,6 @@ Function GetBufferStatus() As Variant
         GetBufferStatus = False
     Else
         GetBufferStatus = Response.Content
-'        With Worksheets("BoonNano")
-'            .Range("byteWritten").Value = json("totalBytesWritten")
-'            .Range("byteProcess").Value = json("totalBytesProcessed")
-'            .Range("byteBuffer").Value = json("totalBytesInBuffer")
-'        End With
     End If
     
     Range("status").Value = "finished"
@@ -263,11 +258,10 @@ Private Function PostDataLoop() As Boolean
     Dim PostBody As String, appendQ As Boolean, dataSubsection As Long, i As Long, j As Long, maxRow As Long, factor As Long, bytes() As Byte, separator As String
     
     
-    ''''''''''''''''
+    '----------
     dataSubsection = 1
     factor = 15000 ' if too large, then the webrequest will fail with a 100 CONTINUE error
     separator = Application.International(xlListSeparator)
-    ' MsgBox Application.International(xlListSeparator)
     Do While dataSubsection <= row
     
     arrString = ""
@@ -324,7 +318,7 @@ Private Function PostDataLoop() As Boolean
     
     Loop
     
-    ''''''''''''''''
+    '----------
     
     Range("status").Value = "finished"
 
