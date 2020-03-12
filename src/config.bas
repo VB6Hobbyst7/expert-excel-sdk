@@ -26,6 +26,7 @@ Private Function AutotuneConfig() As Boolean
     
     Client.BaseUrl = Worksheets(label).Range("url").Value
     Client.TimeoutMs = 120000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "autoTuneConfig/{label}"
@@ -166,7 +167,8 @@ Private Function SetConfig() As Boolean
     
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.RequestFormat = WebFormat.json
@@ -185,6 +187,7 @@ Private Function SetConfig() As Boolean
     
     tmpName = "accuracy"
     CheckBlank (tmpName)
+    MsgBox (VarType(Range(tmpName).Value))
     config.Add tmpName, Range(tmpName).Value
     
     Dim features() As Variant

@@ -10,7 +10,8 @@ Private Function GetStatus() As Boolean
     Dim Client As New WebClient
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "nanoStatus/{label}"
@@ -62,7 +63,8 @@ Private Function GetResults() As Variant
     
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "nanoResults/{label}"
@@ -112,7 +114,8 @@ Function GetBufferStatus() As Variant
     
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "bufferStatus/{label}"
@@ -167,6 +170,7 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
 
     Client.BaseUrl = Worksheets(label).Range("url").Value
     Client.TimeoutMs = 120000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.RequestFormat = WebFormat.json
@@ -339,7 +343,8 @@ Private Function RunNano() As Boolean
     Dim Client As New WebClient
     
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "nanoRun/{label}"
