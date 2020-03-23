@@ -187,7 +187,6 @@ Private Function SetConfig() As Boolean
     
     tmpName = "accuracy"
     CheckBlank (tmpName)
-    MsgBox (VarType(Range(tmpName).Value))
     config.Add tmpName, Range(tmpName).Value
     
     Dim features() As Variant
