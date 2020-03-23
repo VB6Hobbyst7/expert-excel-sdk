@@ -43,10 +43,11 @@ Private Function CreateNano(label As String) As Boolean
     
     On Error GoTo JSONErr
     Dim json As Object
+    ' MsgBox Repsonse.Content
     
-    ' Set json = JsonConverter.ParseJson(Response.Content)
+    Set json = JsonConverter.ParseJson(Response.Content)
     Set json = Response.Data
-    MsgBox Response.Data.Keys
+    ' MsgBox Response.Data.Keys
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         CreateNano = False
