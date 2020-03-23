@@ -43,11 +43,7 @@ Private Function CreateNano(label As String) As Boolean
     
     On Error GoTo JSONErr
     Dim json As Object
-    ' MsgBox Repsonse.Content
-    
     Set json = JsonConverter.ParseJson(Response.Content)
-    Set json = Response.Data
-    ' MsgBox Response.Data.Keys
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         CreateNano = False
@@ -137,8 +133,8 @@ Private Function CreateAuthSheet(label As String, user As String) As Boolean
     ws.Cells(1, 1).Name = "xtoken"
     ws.Cells(2, 1).Name = "url"
     ws.Cells(3, 1).Name = "apitenant"
-    ws.Cells(4, 1).Name = "instance"
-    ws.Cells(5, 1).Name = "proxy"
+    ws.Cells(4, 1).Name = "proxy"
+    ws.Cells(5, 1).Name = "instance"
 
     Dim Text As String
     Text = ReadAuthFile()
