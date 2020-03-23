@@ -42,10 +42,11 @@ Private Function AutotuneConfig() As Boolean
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    Dim json As Object
-    
     On Error GoTo JSONErr
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")

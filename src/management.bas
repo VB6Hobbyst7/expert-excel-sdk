@@ -42,8 +42,10 @@ Private Function CreateNano(label As String) As Boolean
     Set Response = Client.Execute(Request)
     
     On Error GoTo JSONErr
-    Dim json As Object
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         CreateNano = False
@@ -193,8 +195,10 @@ Private Function CloseNano() As Boolean
     Set Response = Client.Execute(Request)
     
     On Error GoTo JSONErr
-    Dim json As Object
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         CloseNano = False

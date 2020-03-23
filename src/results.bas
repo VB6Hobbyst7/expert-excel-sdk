@@ -25,8 +25,10 @@ Private Function GetStatus() As Boolean
     Set Response = Client.Execute(Request)
     
     On Error GoTo JSONErr
-    Dim json As Object
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetStatus = False
@@ -77,9 +79,11 @@ Private Function GetResults() As Variant
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    Dim json As Object
     On Error GoTo JSONErr
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
@@ -128,8 +132,10 @@ Function GetBufferStatus() As Variant
     Set Response = Client.Execute(Request)
     
     On Error GoTo JSONErr
-    Dim json As Object
-    Set json = JsonConverter.ParseJson(Response.Content)
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         GetBufferStatus = False
@@ -208,10 +214,12 @@ Private Function LoadData(PostBody As String, Optional Append As Boolean = False
     Request.ResponseFormat = WebFormat.json
     Set Response = Client.Execute(Request)
     
-    Dim json As Object
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr
-        Set json = JsonConverter.ParseJson(Response.Content)
+        Set json = JsonConverter.ParseJson(tempResponse)
     
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         LoadData = False
@@ -356,10 +364,12 @@ Private Function RunNano() As Boolean
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    Dim json As Object
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
     If Response.StatusCode <> 200 Then
         On Error GoTo JSONErr
-        Set json = JsonConverter.ParseJson(Response.Content)
+        Set json = JsonConverter.ParseJson(tempResponse)
         
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         RunNano = False
