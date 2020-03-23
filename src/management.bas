@@ -28,7 +28,8 @@ Private Function CreateNano(label As String) As Boolean
     
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
     Request.Resource = "nanoInstance/{label}"
@@ -42,7 +43,11 @@ Private Function CreateNano(label As String) As Boolean
     
     On Error GoTo JSONErr
     Dim json As Object
+    ' MsgBox Repsonse.Content
+    
     Set json = JsonConverter.ParseJson(Response.Content)
+    Set json = Response.Data
+    ' MsgBox Response.Data.Keys
     If Response.StatusCode <> 200 Then
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         CreateNano = False
@@ -133,6 +138,7 @@ Private Function CreateAuthSheet(label As String, user As String) As Boolean
     ws.Cells(2, 1).Name = "url"
     ws.Cells(3, 1).Name = "apitenant"
     ws.Cells(4, 1).Name = "instance"
+    ws.Cells(5, 1).Name = "proxy"
 
     Dim Text As String
     Text = ReadAuthFile()
@@ -145,6 +151,8 @@ Private Function CreateAuthSheet(label As String, user As String) As Boolean
     ws.Range("url").Value = json(user)("server") & "/expert/v3/"
     
     ws.Range("apitenant").Value = json(user)("api-tenant")
+    
+    ws.Range("proxy").Value = json(user)("proxy-server")
     
     Worksheets("BoonNano").Activate
     
@@ -175,7 +183,8 @@ Private Function CloseNano() As Boolean
     
     On Error GoTo Err
     Client.BaseUrl = Worksheets(label).Range("url").Value
-    Client.TimeoutMs = 75000
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
 
     Dim Request As New WebRequest
     Request.Resource = "nanoInstance/{label}"
