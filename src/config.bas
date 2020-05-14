@@ -255,8 +255,21 @@ Private Function SetConfig() As Boolean
         
         On Error Resume Next
         Worksheets("BoonNano").Shapes("Cluster").Delete
+        Worksheets("BoonNano").Shapes("Reset").Delete
+        Worksheets("BoonNano").Shapes("Learning").Delete
         Application.Run ("PageSetup.ClusterButton")
         Application.Run ("PageSetup.ResetBufferButton")
+        Application.Run ("PageSetup.LearningCheckbox")
+        
+        Dim learn As String
+        learn = Application.Run("results.GetLearning")
+        If Left(learn, 1) = "t" Then
+            Worksheets("BoonNano").Shapes("Learning").OLEFormat.Object.Value = 1
+        ElseIf Left(learn, 1) = "f" Then
+            Worksheets("BoonNano").Shapes("Learning").OLEFormat.Object.Value = 0
+        Else
+            Worksheets("BoonNano").Shapes("Learning").OLEFormat.Object.Value = 1
+        End If
         
     End If
     

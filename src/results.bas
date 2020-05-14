@@ -248,6 +248,119 @@ JSONErr:
 
 End Function
 
+Function PostLearning() As Boolean
+    PostLearning = True
+    
+    Dim label As String
+    label = Range("currentNano").Value
+    
+    Range("status").Value = "switching learning status"
+    Dim Client As New WebClient
+    
+    On Error GoTo Err
+    Client.BaseUrl = Worksheets(label).Range("url").Value
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
+    
+    Dim status As String
+    If Worksheets("BoonNano").Shapes("Learning").OLEFormat.Object.Value = 1 Then
+        status = "true"
+    Else
+        status = "false"
+    End If
+    
+    Dim Request As New WebRequest
+    Request.Resource = "learning/{label}"
+    Request.Method = WebMethod.HttpPost
+    Request.AddUrlSegment "label", label
+    Request.AddQuerystringParam "enable", status
+    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
+    Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
+
+    Dim Response As WebResponse
+    Set Response = Client.Execute(Request)
+    
+    On Error GoTo JSONErr
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    If Response.StatusCode <> 200 Then
+        Set json = JsonConverter.ParseJson(tempResponse)
+        MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
+        PostLearning = False
+    Else
+        PostLearning = True
+    End If
+    
+    Range("status").Value = "finished"
+    
+Exit Function
+
+Err:
+    MsgBox "Learning status failed: " & Err.Description
+    PostLearning = False
+    Exit Function
+
+JSONErr:
+    MsgBox "Response error: switch learning status"
+    PostLearning = False
+    Exit Function
+
+End Function
+
+
+Function GetLearning() As String
+    GetLearning = "True"
+    
+    Dim label As String
+    label = Range("currentNano").Value
+    
+    Dim Client As New WebClient
+    
+    On Error GoTo Err
+    Client.BaseUrl = Worksheets(label).Range("url").Value
+    Client.TimeoutMs = 90000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
+
+    
+    Dim Request As New WebRequest
+    Request.Resource = "learning/{label}"
+    Request.Method = WebMethod.HttpGet
+    Request.AddUrlSegment "label", label
+    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
+    Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
+
+    Dim Response As WebResponse
+    Set Response = Client.Execute(Request)
+    
+    On Error GoTo JSONErr
+    Dim json As Object, tempResponse As String
+    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+    
+    If Response.StatusCode <> 200 Then
+        Set json = JsonConverter.ParseJson(tempResponse)
+        MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
+        GetLearning = "False"
+    Else
+        GetLearning = tempResponse
+    End If
+    
+    Range("status").Value = "finished"
+    
+Exit Function
+
+Err:
+    MsgBox "Get Learning failed: " & Err.Description
+    GetLearning = "False"
+    Exit Function
+
+JSONErr:
+    MsgBox "Response error: get learning"
+    GetLearning = "False"
+    Exit Function
+
+End Function
+
 Private Function PostDataLoop() As Boolean
     PostDataLoop = True
 
@@ -339,6 +452,12 @@ End Function
 Private Function RunNano() As Boolean
     RunNano = True
     On Error GoTo Err
+    
+    If Not (PostLearning) Then
+        RunNano = False
+        Exit Function
+    End If
+    
     If Not (PostDataLoop) Then
         RunNano = False
         Exit Function

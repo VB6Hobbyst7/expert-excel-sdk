@@ -67,6 +67,16 @@ Private Sub ByFeatureCheckbox()
     End With
 End Sub
 
+Private Sub LearningCheckbox()
+    Dim chbx As CheckBox
+    Set t = Worksheets("BoonNano").Range("F1:G1")
+    Set chbx = Worksheets("BoonNano").CheckBoxes.Add(Left:=t.Left + 10, Top:=t.Top - 3, Width:=t.Width - 50, Height:=6)
+    With chbx
+        .Name = "Learning"
+        .Caption = "Learning"
+    End With
+End Sub
+
 Private Sub CloseButton()
     Dim btn As Button
     Worksheets("BoonNano").Range("B1:B2").Value = ""
@@ -87,6 +97,7 @@ Private Sub CloseCleanup()
     With Worksheets("BoonNano")
         .Shapes("Autotune").Delete
         .Shapes("ByFeature").Delete
+        .Shapes("Learning").Delete
         .Shapes("Cluster").Delete
         .Shapes("Configure").Delete
         .Shapes("Reset").Delete
