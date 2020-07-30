@@ -37,7 +37,7 @@ Private Sub GetButtons()
         End If
         
         On Error GoTo Err
-        AutotuneButton
+        AutotuneCheckbox
         ByFeatureCheckbox
         ConfigureButton
         Worksheets("BoonNano").Shapes("openBtn").Delete
@@ -109,15 +109,15 @@ Private Sub CloseCleanup()
 
 End Sub
 
-Private Sub AutotuneButton()
-    Dim btn As Button
+Private Sub AutotuneCheckbox()
+    Dim chbx As CheckBox
     Set t = Worksheets("BoonNano").Range("A5")
-    Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 20, t.Top + 2, t.Width - 40, t.Height - 4)
-    With btn
+    Set chbx = Worksheets("BoonNano").CheckBoxes.Add(Left:=t.Left + 10, Top:=t.Top - 3, Width:=t.Width - 50, Height:=6)
+    With chbx
         .Name = "Autotune"
         .Caption = "Autotune"
-        .OnAction = "config.AutotuneConfig"
     End With
+    Worksheets("BoonNano").Shapes("Autotune").OLEFormat.Object.Value = 1
 End Sub
 
 Private Sub ClusterButton()
@@ -138,8 +138,8 @@ Private Sub ConfigureButton()
     Set btn = Worksheets("BoonNano").Buttons.Add(t.Left + 20, t.Top + 2, t.Width - 40, t.Height - 4)
     With btn
         .Name = "Configure"
-        .Caption = "Manual"
-        .OnAction = "config.SetConfig"
+        .Caption = "Configure Nano"
+        .OnAction = "config.ConfigureNano"
     End With
 End Sub
 
@@ -149,6 +149,7 @@ Private Sub ResetBuffer()
     Application.Run ("management.OpenNano")
     On Error Resume Next
     Worksheets("BoonNano").Shapes("Cluster").Delete
+    Worksheets("BoonNano").Shapes("Learning").Delete
     Range("C3:XFD6,percentVariation,numericFormat,streamingWindowSize,accuracy,numFeatures,anomalyIndex,numClusters,totalInferences,avgClusterTime") = ""
     Exit Sub
 
