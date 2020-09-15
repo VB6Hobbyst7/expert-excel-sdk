@@ -73,7 +73,7 @@ Private Function GetResults() As Variant
     Request.Method = WebMethod.HttpGet
     Request.AddUrlSegment "label", label
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
-    Request.AddQuerystringParam "results", "ID,SI,RI,DI,FI"
+    Request.AddQuerystringParam "results", "ID,RI,DI,FI"
     Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
 
     Dim Response As WebResponse
@@ -553,7 +553,7 @@ Private Function ExportAnomalies() As Boolean
     Else
         Set NewSheet = Worksheets.Add(After:=Worksheets("BoonNano"))
         NewSheet.Name = label
-        Worksheets("Results").Columns("G").Select
+        Worksheets("Results").Columns("F").Select
         ActiveWindow.FreezePanes = True
         
     End If
@@ -563,17 +563,15 @@ Private Function ExportAnomalies() As Boolean
         Worksheets(label).Cells(1, 1) = "Pattern Number"
         Worksheets(label).Cells(1, 2) = "Cluster ID"
         Worksheets(label).Cells(1, 3) = "Anomaly Index"
-        Worksheets(label).Cells(1, 4) = "Smoothed Anomaly Index"
-        Worksheets(label).Cells(1, 5) = "Frequency Index"
-        Worksheets(label).Cells(1, 6) = "Distance Index"
+        Worksheets(label).Cells(1, 4) = "Frequency Index"
+        Worksheets(label).Cells(1, 5) = "Distance Index"
 
     For i = 1 To results("RI").Count
         Worksheets(label).Cells(i + startRow, 1) = i + startRow - 1
         Worksheets(label).Cells(i + startRow, 2) = results("ID")(i)
         Worksheets(label).Cells(i + startRow, 3) = results("RI")(i)
-        Worksheets(label).Cells(i + startRow, 4) = results("SI")(i)
-        Worksheets(label).Cells(i + startRow, 5) = results("FI")(i)
-        Worksheets(label).Cells(i + startRow, 6) = results("DI")(i)
+        Worksheets(label).Cells(i + startRow, 4) = results("FI")(i)
+        Worksheets(label).Cells(i + startRow, 5) = results("DI")(i)
     Next i
     With Worksheets(label).Columns("A:F")
         .AutoFit

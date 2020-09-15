@@ -1,4 +1,15 @@
 Attribute VB_Name = "config"
+Private Sub ConfigureNano()
+
+    SetConfig
+    
+    Dim autotune As Boolean
+    If Worksheets("BoonNano").Shapes("Autotune").OLEFormat.Object.Value = 1 Then
+        AutotuneConfig
+    End If
+    
+    
+End Sub
 
 Private Function AutotuneConfig() As Boolean
     AutotuneConfig = True
@@ -16,11 +27,6 @@ Private Function AutotuneConfig() As Boolean
     Range("status").Value = "autotuning"
     Dim label As String, byFeat As Boolean
     label = Range("currentNano").Value
-    If Worksheets("BoonNano").Shapes("ByFeature").OLEFormat.Object.Value = 1 Then
-        byFeat = True
-    Else
-        byFeat = False
-    End If
     
     Dim Client As New WebClient
     
@@ -29,29 +35,88 @@ Private Function AutotuneConfig() As Boolean
     Client.SetProxy Worksheets(label).Range("proxy").Value
     
     Dim Request As New WebRequest
-    Request.Resource = "autoTuneConfig/{label}"
+    Request.Resource = "autoTune/{label}"
     Request.Method = WebMethod.HttpPost
     Request.AddUrlSegment "label", label
-    Request.AddQuerystringParam "byFeature", byFeat
-    Request.AddQuerystringParam "autoTunePV", True
-    Request.AddQuerystringParam "autoTuneRange", True
-    Request.AddQuerystringParam "exclusions", ""
+    
     Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
     Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
 
     Dim Response As WebResponse
     Set Response = Client.Execute(Request)
     
-    On Error GoTo JSONErr
-    Dim json As Object, tempResponse As String
-    tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
     
-    Set json = JsonConverter.ParseJson(tempResponse)
     If Response.StatusCode <> 200 Then
+    
+        On Error GoTo JSONErr
+        Dim json As Object, tempResponse As String
+        tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
         
         MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
         AutotuneConfig = False
     Else
+    
+        If Not (GetConfig) Then
+            AutotuneConfig = False
+            Exit Function
+        End If
+        
+    End If
+    
+    Range("status").Value = "finished"
+    
+ Exit Function
+    
+Err:
+    AutotuneConfig = False
+    Exit Function
+
+JSONErr:
+    If Response.StatusCode = 408 Then ' timeout
+        MsgBox "Server timeout"
+    Else
+        MsgBox "Response error: autotune"
+    End If
+    AutotuneConfig = False
+    Exit Function
+
+End Function
+
+Private Function GetConfig() As Boolean
+    GetConfig = True
+
+    Dim label As String
+    label = Range("currentNano").Value
+    
+    Dim Client As New WebClient
+    
+    Client.BaseUrl = Worksheets(label).Range("url").Value
+    Client.TimeoutMs = 120000
+    Client.SetProxy Worksheets(label).Range("proxy").Value
+    
+    Dim Request As New WebRequest
+    Request.Resource = "clusterConfig/{label}"
+    Request.Method = WebMethod.HttpGet
+    Request.AddUrlSegment "label", label
+    
+    Request.AddQuerystringParam "api-tenant", Worksheets(label).Range("apitenant").Value
+    Request.AddHeader "x-token", Worksheets(label).Range("xtoken").Value
+
+    Dim Response As WebResponse
+    Set Response = Client.Execute(Request)
+    
+    
+    Dim json As Object, tempResponse As String
+    If Response.StatusCode <> 200 Then
+        On Error GoTo JSONErr
+        Set json = WebHelpers.ParseJson(Response.Content)
+        
+        MsgBox "NANO ERROR:" & vbNewLine & "   " & json("message")
+        GetConfig = False
+    Else
+        tempResponse = Right(Response.Content, Len(Response.Content) - InStr(Response.Content, "{") + 1)
+        Set json = JsonConverter.ParseJson(tempResponse)
+        
         Worksheets("BoonNano").Range("percentVariation") = CDbl(Format(json("percentVariation"), "#,##0.00"))
         Dim col As String
         col = Split(Selection.Address, "$")(1)
@@ -76,23 +141,17 @@ Private Function AutotuneConfig() As Boolean
         
     End If
     
-    Range("status").Value = "finished"
-    
- Exit Function
-    
-Err:
-    AutotuneConfig = False
     Exit Function
-
+    
 JSONErr:
     If Response.StatusCode = 408 Then ' timeout
         MsgBox "Server timeout"
     Else
-        MsgBox "Response error: autotune"
+        MsgBox "Response error: get config"
     End If
-    AutotuneConfig = False
+    GetConfig = False
     Exit Function
-
+        
 End Function
 
 Private Sub CheckBlank(Name As String)
@@ -161,8 +220,20 @@ Private Function SetConfig() As Boolean
     Application.UseSystemSeparators = True
     
     Range("status").Value = "configuring"
-    Dim label As String
+    Dim label As String, byFeat As Boolean, autotune As Boolean
     label = Range("currentNano").Value
+    
+    If Worksheets("BoonNano").Shapes("ByFeature").OLEFormat.Object.Value = 1 Then
+        byFeat = True
+    Else
+        byFeat = False
+    End If
+    
+    If Worksheets("BoonNano").Shapes("Autotune").OLEFormat.Object.Value = 1 Then
+        autotune = True
+    Else
+        autotune = False
+    End If
     
     Dim Client As New WebClient
     
@@ -185,6 +256,9 @@ Private Function SetConfig() As Boolean
     ' create config dictionary
     Dim config As New Dictionary
     Dim tmpName As String
+    
+    tmpName = "clusterMode"
+    config.Add tmpName, "batch"
     
     tmpName = "accuracy"
     CheckBlank (tmpName)
@@ -218,6 +292,14 @@ Private Function SetConfig() As Boolean
         col = Split(Cells(1, Selection.Columns(i + 2).Column).Address, "$")(1)
     Next i
     config.Add "features", features
+    
+    Dim autotuneDict As New Dictionary
+    autotuneDict.Add "autoTuneByFeature", byFeat
+    autotuneDict.Add "autoTunePV", autotune
+    autotuneDict.Add "autoTuneRange", autotune
+    autotuneDict.Add "maxClusters", 1000
+    
+    config.Add "autoTuning", autotuneDict
     
     tmpName = "numericFormat"
     CheckBlank (tmpName)
